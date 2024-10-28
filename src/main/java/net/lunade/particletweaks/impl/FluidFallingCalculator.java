@@ -21,7 +21,8 @@ public class FluidFallingCalculator {
 		Particle particle,
 		boolean safeInLavaOrFire,
 		boolean slowsInFluid,
-		boolean flowsWithFluid
+		boolean flowsWithFluid,
+		double fluidMovementScale
 	) {
 		if (!safeInLavaOrFire || slowsInFluid || flowsWithFluid) {
 			BlockPos blockPos = BlockPos.containing(pos);
@@ -62,7 +63,7 @@ public class FluidFallingCalculator {
 
 			if (flowsWithFluid && isFluidHighEnough) {
 				Vec3 flow = fluidState.getFlow(level, blockPos);
-				movement = movement.add(flow.scale(0.015D));
+				movement = movement.add(flow.scale(fluidMovementScale));
 			}
 		}
 

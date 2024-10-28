@@ -40,6 +40,10 @@ public interface ParticleTweakInterface {
 
 	boolean particleTweaks$movesWithFluid();
 
+	void particleTweaks$setFluidMovementScale(double fluidMovementScale);
+
+	double particleTweaks$getFluidMovementScale();
+
 	void particleTweaks$setCanBurn(boolean set);
 
 	boolean particleTweaks$canBurn();

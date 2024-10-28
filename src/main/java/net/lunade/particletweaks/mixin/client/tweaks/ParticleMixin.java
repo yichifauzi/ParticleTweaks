@@ -59,7 +59,8 @@ public abstract class ParticleMixin {
 				Particle.class.cast(this),
 				!particleTweakInterface.particleTweaks$canBurn(),
 				particleTweakInterface.particleTweaks$slowsInFluid(),
-				particleTweakInterface.particleTweaks$movesWithFluid()
+				particleTweakInterface.particleTweaks$movesWithFluid(),
+				particleTweakInterface.particleTweaks$getFluidMovementScale()
 			);
 
 			if (fluidMovement != null) {

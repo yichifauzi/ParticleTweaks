@@ -1,7 +1,11 @@
-package net.lunade.particletweaks;
+package net.lunade.particletweaks.registry;
 
 import com.mojang.serialization.MapCodec;
+import java.util.function.Function;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
+import net.lunade.particletweaks.ParticleTweaksConstants;
 import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
@@ -11,9 +15,14 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
-import java.util.function.Function;
 
+@Environment(EnvType.CLIENT)
 public class ParticleTweaksParticleTypes {
+	public static final SimpleParticleType FLOWING_LAVA = register("flowing_lava");
+	public static final SimpleParticleType FLOWING_WATER = register("flowing_water");
+
+	public static void init() {
+	}
 
 	@NotNull
 	private static SimpleParticleType register(@NotNull String name, boolean alwaysShow) {

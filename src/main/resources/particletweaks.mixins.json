@@ -5,6 +5,8 @@
   "plugin": "net.lunade.particletweaks.mixin.ParticleTweaksMixinPlugin",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "client.fluid_particles.LavaFluidMixin",
+    "client.fluid_particles.WaterFluidMixin",
     "client.tweaks.BaseAshSmokeParticleMixin",
     "client.tweaks.BreakingItemParticleMixin",
     "client.tweaks.BubbleColumnUpParticleMixin",

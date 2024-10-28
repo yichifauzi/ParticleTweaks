@@ -169,6 +169,17 @@ public abstract class SingleQuadParticleMixin extends Particle implements Partic
 	}
 
 	@Unique
+	private double particleTweaks$fluidMovementScale = 0.015D;
+	@Override
+	public void particleTweaks$setFluidMovementScale(double fluidMovementScale) {
+		this.particleTweaks$fluidMovementScale = fluidMovementScale;
+	}
+	@Override
+	public double particleTweaks$getFluidMovementScale() {
+		return this.particleTweaks$fluidMovementScale;
+	}
+
+	@Unique
 	private boolean particleTweaks$canBurn = false;
 
 	@Unique

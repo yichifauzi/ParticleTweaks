@@ -48,7 +48,8 @@ public abstract class FallingDustParticleMixin extends TextureSheetParticle impl
 			this,
 			!this.particleTweaks$canBurn(),
 			this.particleTweaks$slowsInFluid(),
-			this.particleTweaks$movesWithFluid()
+			this.particleTweaks$movesWithFluid(),
+			this.particleTweaks$getFluidMovementScale()
 		);
 
 		if (fluidMovement != null) {

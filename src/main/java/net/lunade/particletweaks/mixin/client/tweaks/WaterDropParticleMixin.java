@@ -37,6 +37,7 @@ public abstract class WaterDropParticleMixin extends TextureSheetParticle implem
 		this.particleTweaks$setSlowsInFluid(true);
 		this.particleTweaks$setMovesWithFluid(true);
 		this.particleTweaks$setCanBurn(true);
+		this.particleTweaks$setFluidMovementScale(0.03D);
 	}
 
 	@Inject(method = "tick", at = @At("HEAD"), cancellable = true)
@@ -63,7 +64,8 @@ public abstract class WaterDropParticleMixin extends TextureSheetParticle implem
 				this,
 				!this.particleTweaks$canBurn(),
 				this.particleTweaks$slowsInFluid(),
-				this.particleTweaks$movesWithFluid()
+				this.particleTweaks$movesWithFluid(),
+				this.particleTweaks$getFluidMovementScale()
 			);
 
 			if (fluidMovement != null) {

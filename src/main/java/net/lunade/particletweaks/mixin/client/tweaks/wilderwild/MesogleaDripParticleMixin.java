@@ -60,7 +60,8 @@ public abstract class MesogleaDripParticleMixin extends TextureSheetParticle imp
 				Particle.class.cast(this),
 				!this.particleTweaks$canBurn(),
 				this.particleTweaks$slowsInFluid(),
-				this.particleTweaks$movesWithFluid()
+				this.particleTweaks$movesWithFluid(),
+				this.particleTweaks$getFluidMovementScale()
 			);
 
 			if (fluidMovement != null) {

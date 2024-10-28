@@ -62,7 +62,8 @@ public abstract class DripParticleMixin extends TextureSheetParticle implements 
 				this,
 				!this.particleTweaks$canBurn(),
 				this.particleTweaks$slowsInFluid(),
-				this.particleTweaks$movesWithFluid()
+				this.particleTweaks$movesWithFluid(),
+				this.particleTweaks$getFluidMovementScale()
 			);
 
 			if (fluidMovement != null) {
