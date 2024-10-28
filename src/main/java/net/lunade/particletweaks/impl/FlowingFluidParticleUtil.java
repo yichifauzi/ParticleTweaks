@@ -233,7 +233,7 @@ public class FlowingFluidParticleUtil {
 						world,
 						pos,
 						direction,
-						random.nextInt((int) (cascadeStrength * 1.35D), (int) (cascadeStrength * 2D)),
+						random.nextInt((int) (cascadeStrength * 1.25D), (int) (cascadeStrength * 1.5D)),
 						true,
 						0.05D,
 						0.2D,
