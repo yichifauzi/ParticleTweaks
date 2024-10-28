@@ -190,6 +190,8 @@ public class FlowingFluidParticleUtil {
 		@NotNull FluidState state,
 		RandomSource random
 	) {
+		if (!world.isLoaded(pos)) return false;
+		
 		if (!state.isSource() && !state.isEmpty()) {
 			int cascadeStrength = 3;
 			Vec3 rawFlow = state.getFlow(world, pos);
