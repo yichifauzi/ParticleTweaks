@@ -2,7 +2,7 @@ package net.lunade.particletweaks.mixin.client.fluid_particles;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.lunade.particletweaks.impl.FlowingFluidParticleGenerator;
+import net.lunade.particletweaks.impl.FlowingFluidParticleUtil;
 import net.lunade.particletweaks.registry.ParticleTweaksParticleTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
@@ -23,6 +23,6 @@ public class WaterFluidMixin {
 		at = @At("TAIL")
 	)
 	public void particleTweaks$animateTick(Level world, BlockPos pos, FluidState state, RandomSource random, CallbackInfo info) {
-		FlowingFluidParticleGenerator.onAnimateTick(world, pos, state, random, 3, 1, true, ParticleTweaksParticleTypes.FLOWING_WATER);
+		FlowingFluidParticleUtil.onAnimateTick(world, pos, state, random, 3, 1, true, ParticleTweaksParticleTypes.FLOWING_WATER);
 	}
 }

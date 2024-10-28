@@ -2,7 +2,7 @@ package net.lunade.particletweaks.mixin.client.tweaks;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import net.lunade.particletweaks.impl.FluidFallingCalculator;
+import net.lunade.particletweaks.impl.FlowingFluidParticleUtil;
 import net.lunade.particletweaks.impl.ParticleTweakInterface;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.CherryParticle;
@@ -51,7 +51,7 @@ public abstract class CherryParticleMixin extends TextureSheetParticle implement
 				this.lifetime = Math.min(this.lifetime + 1, this.particleTweaks$maxLifetime);
 			}
 
-			Vec3 fluidMovement = FluidFallingCalculator.handleFluidInteraction(
+			Vec3 fluidMovement = FlowingFluidParticleUtil.handleFluidInteraction(
 				this.level,
 				new Vec3(this.x, this.y, this.z),
 				new Vec3(this.xd, this.yd, this.zd),
