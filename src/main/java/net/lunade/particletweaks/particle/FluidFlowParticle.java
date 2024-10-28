@@ -24,6 +24,7 @@ public class FluidFlowParticle extends TextureSheetParticle {
 	private static final int LAVA_COLOR = 16743195;
 	private final boolean isLava;
 	private final boolean floatOnFluid;
+	private final boolean endWhenUnderFluid;
 
 	FluidFlowParticle(ClientLevel world, @NotNull SpriteSet spriteProvider, double d, double e, double f, double velX, double velY, double velZ, @NotNull FluidState fluid) {
 		super(world, d, e, f, velX, velY, velZ);
@@ -39,13 +40,22 @@ public class FluidFlowParticle extends TextureSheetParticle {
 			this.rCol = FastColor.ARGB32.red(LAVA_COLOR) / 255F;
 			this.bCol = FastColor.ARGB32.blue(LAVA_COLOR) / 255F;
 			this.gCol = FastColor.ARGB32.green(LAVA_COLOR) / 255F;
-		} else {
-			if (world.random.nextFloat() < 0.75F) {
+			this.quadSize *= 0.75F;
+			this.endWhenUnderFluid = false;
+		} else if (fluid.is(FluidTags.WATER)) {
+			if (world.random.nextFloat() < 0.8F) {
 				int waterColor = world.getBiome(BlockPos.containing(d, e, f)).value().getWaterColor();
 				this.rCol = Math.clamp(((FastColor.ARGB32.red(waterColor) / 255F) * (float)world.random.triangle(1D, 0.1D)), 0F, 1F);
 				this.bCol = Math.clamp(((FastColor.ARGB32.blue(waterColor) / 255F) * (float)world.random.triangle(1D, 0.1D)), 0F, 1F);
 				this.gCol = Math.clamp(((FastColor.ARGB32.green(waterColor) / 255F) * (float)world.random.triangle(1D, 0.1D)), 0F, 1F);
 			}
+			this.alpha = 0.6F;
+			this.quadSize *= 0.75F;
+			this.endWhenUnderFluid = false;
+		} else {
+			this.alpha = 0.2F;
+			this.quadSize *= 2F;
+			this.endWhenUnderFluid = true;
 		}
 
 		if (this instanceof ParticleTweakInterface particleTweakInterface) {
@@ -56,6 +66,13 @@ public class FluidFlowParticle extends TextureSheetParticle {
 			particleTweakInterface.particleTweaks$setSwitchesExit(true);
 			particleTweakInterface.particleTweaks$setFluidMovementScale(0.05D);
 			particleTweakInterface.particleTweaks$setScaler(0.5F);
+			if (!this.isLava) {
+				if (fluid.is(FluidTags.WATER)) {
+					particleTweakInterface.particleTweaks$setMaxAlpha(0.6F);
+				} else {
+					particleTweakInterface.particleTweaks$setMaxAlpha(0.2F);
+				}
+			}
 		}
 	}
 
@@ -78,6 +95,9 @@ public class FluidFlowParticle extends TextureSheetParticle {
 							this.yd += 0.05D;
 						}
 					}
+				}
+				if (this.endWhenUnderFluid) {
+					this.age = this.lifetime;
 				}
 			}
 		}
@@ -112,6 +132,17 @@ public class FluidFlowParticle extends TextureSheetParticle {
 			@NotNull SimpleParticleType particleOptions, @NotNull ClientLevel clientLevel, double x, double y, double z, double g, double h, double i
 		) {
 			return new FluidFlowParticle(clientLevel, this.spriteProvider, x, y, z, g, h, i, Fluids.WATER.defaultFluidState());
+		}
+	}
+
+	@Environment(EnvType.CLIENT)
+	public record SplashFactory(SpriteSet spriteProvider) implements ParticleProvider<SimpleParticleType> {
+		@Override
+		@NotNull
+		public Particle createParticle(
+			@NotNull SimpleParticleType particleOptions, @NotNull ClientLevel clientLevel, double x, double y, double z, double g, double h, double i
+		) {
+			return new FluidFlowParticle(clientLevel, this.spriteProvider, x, y, z, g, h, i, Fluids.EMPTY.defaultFluidState());
 		}
 	}
 }

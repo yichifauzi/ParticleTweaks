@@ -59,4 +59,8 @@ public interface ParticleTweakInterface {
 	void particleTweaks$setTargetScale(float f);
 
 	float particleTweaks$getTargetScale();
+
+	void particleTweaks$setMaxAlpha(float maxAlpha);
+
+	float particleTweaks$getMaxAlpha();
 }

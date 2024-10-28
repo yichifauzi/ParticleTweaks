@@ -23,6 +23,16 @@ public class WaterFluidMixin {
 		at = @At("TAIL")
 	)
 	public void particleTweaks$animateTick(Level world, BlockPos pos, FluidState state, RandomSource random, CallbackInfo info) {
-		FlowingFluidParticleUtil.onAnimateTick(world, pos, state, random, 3, 1, true, ParticleTweaksParticleTypes.FLOWING_WATER);
+		FlowingFluidParticleUtil.onAnimateTick(
+			world,
+			pos,
+			state,
+			random,
+			3,
+			1,
+			true,
+			true,
+			ParticleTweaksParticleTypes.FLOWING_WATER
+		);
 	}
 }

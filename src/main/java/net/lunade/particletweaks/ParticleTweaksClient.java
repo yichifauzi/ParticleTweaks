@@ -3,7 +3,12 @@ package net.lunade.particletweaks;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientChunkEvents;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
+import net.lunade.particletweaks.impl.FlowingFluidParticleUtil;
 import net.lunade.particletweaks.particle.FluidFlowParticle;
 import net.lunade.particletweaks.registry.ParticleTweaksParticleTypes;
 
@@ -12,10 +17,17 @@ public class ParticleTweaksClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
+		ClientChunkEvents.CHUNK_UNLOAD.register((clientLevel, levelChunk) -> FlowingFluidParticleUtil.clearCascadesInChunk(levelChunk.getPos()));
+		ClientLifecycleEvents.CLIENT_STOPPING.register((clientLevel) -> FlowingFluidParticleUtil.clearCascades());
+		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> FlowingFluidParticleUtil.clearCascades());
+
+		ClientTickEvents.START_WORLD_TICK.register(FlowingFluidParticleUtil::tickCascades);
+
 		ParticleTweaksParticleTypes.init();
 
 		ParticleFactoryRegistry particleRegistry = ParticleFactoryRegistry.getInstance();
 		particleRegistry.register(ParticleTweaksParticleTypes.FLOWING_LAVA, FluidFlowParticle.LavaFactory::new);
 		particleRegistry.register(ParticleTweaksParticleTypes.FLOWING_WATER, FluidFlowParticle.WaterFactory::new);
+		particleRegistry.register(ParticleTweaksParticleTypes.SPLASH, FluidFlowParticle.SplashFactory::new);
 	}
 }

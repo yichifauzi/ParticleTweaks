@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 public class ParticleTweaksParticleTypes {
 	public static final SimpleParticleType FLOWING_LAVA = register("flowing_lava");
 	public static final SimpleParticleType FLOWING_WATER = register("flowing_water");
+	public static final SimpleParticleType SPLASH = register("splash");
 
 	public static void init() {
 	}

@@ -23,6 +23,16 @@ public class LavaFluidMixin {
 		at = @At("TAIL")
 	)
 	public void particleTweaks$animateTick(Level world, BlockPos pos, FluidState state, RandomSource random, CallbackInfo info) {
-		FlowingFluidParticleUtil.onAnimateTick(world, pos, state, random, 0, 10, false, ParticleTweaksParticleTypes.FLOWING_LAVA);
+		FlowingFluidParticleUtil.onAnimateTick(
+			world,
+			pos,
+			state,
+			random,
+			0,
+			10,
+			false,
+			false,
+			ParticleTweaksParticleTypes.FLOWING_LAVA
+		);
 	}
 }

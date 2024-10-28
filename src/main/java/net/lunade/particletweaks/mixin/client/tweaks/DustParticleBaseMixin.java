@@ -41,7 +41,7 @@ public abstract class DustParticleBaseMixin extends TextureSheetParticle impleme
 			if (!this.particleTweaks$fadeInsteadOfScale() && !switched) {
 				info.setReturnValue(info.getReturnValue() * this.particleTweaks$getScale(partialTicks));
 			} else {
-				this.alpha = this.particleTweaks$getScale(partialTicks);
+				this.alpha = this.particleTweaks$getScale(partialTicks) * this.particleTweaks$getMaxAlpha();
 			}
 		}
 	}

@@ -38,7 +38,7 @@ public abstract class TrialSpawnerDetectionParticleMixin extends TextureSheetPar
 			if (!this.particleTweaks$fadeInsteadOfScale() && !switched) {
 				info.setReturnValue(info.getReturnValue() * this.particleTweaks$getScale(partialTicks));
 			} else {
-				this.alpha = this.particleTweaks$getScale(partialTicks);
+				this.alpha = this.particleTweaks$getScale(partialTicks) * this.particleTweaks$getMaxAlpha();
 			}
 		}
 	}

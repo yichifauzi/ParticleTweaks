@@ -38,9 +38,6 @@ public abstract class ParticleMixin {
 	@Shadow
 	public abstract void remove();
 
-	@Shadow
-	protected float gravity;
-
 	@Inject(method = "tick", at = @At("HEAD"), cancellable = true)
 	public void particleTweaks$runScaling(CallbackInfo info) {
 		if (Particle.class.cast(this) instanceof ParticleTweakInterface particleTweakInterface) {

@@ -48,7 +48,7 @@ public abstract class SingleQuadParticleMixin extends Particle implements Partic
 			if (!this.particleTweaks$fadeInsteadOfScale() && !switched) {
 				info.setReturnValue(info.getReturnValue() * this.particleTweaks$getScale(partialTicks));
 			} else {
-				this.alpha = this.particleTweaks$getScale(partialTicks);
+				this.alpha = this.particleTweaks$getScale(partialTicks) * this.particleTweaks$getMaxAlpha();
 			}
 		}
 	}
@@ -182,13 +182,11 @@ public abstract class SingleQuadParticleMixin extends Particle implements Partic
 	@Unique
 	private boolean particleTweaks$canBurn = false;
 
-	@Unique
 	@Override
 	public void particleTweaks$setCanBurn(boolean set) {
 		this.particleTweaks$canBurn = set;
 	}
 
-	@Unique
 	@Override
 	public boolean particleTweaks$canBurn() {
 		return this.particleTweaks$canBurn;
@@ -222,5 +220,16 @@ public abstract class SingleQuadParticleMixin extends Particle implements Partic
 	@Override
 	public float particleTweaks$getTargetScale() {
 		return this.particleTweaks$targetScale;
+	}
+
+	@Unique
+	private float particleTweaks$maxAlpha = 1F;
+	@Override
+	public void particleTweaks$setMaxAlpha(float f) {
+		this.particleTweaks$maxAlpha = f;
+	}
+	@Override
+	public float particleTweaks$getMaxAlpha() {
+		return this.particleTweaks$maxAlpha;
 	}
 }
