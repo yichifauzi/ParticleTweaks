@@ -10,6 +10,14 @@
   "license": "MIT",
   "icon": "assets/particletweaks/icon.png",
   "environment": "client",
+  "entrypoints": {
+    "main": [
+      "net.lunade.particletweaks.ParticleTweaks"
+    ],
+    "client": [
+      "net.lunade.particletweaks.ParticleTweaksClient"
+    ]
+  },
   "mixins": [
     "particletweaks.mixins.json"
   ],

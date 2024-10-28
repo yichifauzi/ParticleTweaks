@@ -2,7 +2,7 @@ package net.lunade.particletweaks.mixin.client.tweaks;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import net.lunade.particletweaks.ParticleTweaksSharedConstants;
+import net.lunade.particletweaks.ParticleTweaksConstants;
 import net.lunade.particletweaks.impl.ParticleTweakInterface;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.BubbleColumnUpParticle;
@@ -38,7 +38,7 @@ public abstract class BubbleColumnUpParticleMixin extends TextureSheetParticle i
 	)
 	public void particleTweaks$outOfWater(BubbleColumnUpParticle instance, Operation<Void> original) {
 		if (this.particleTweaks$usesNewSystem()) {
-			if (!ParticleTweaksSharedConstants.MAKE_BUBBLES_POP_MOD) {
+			if (!ParticleTweaksConstants.MAKE_BUBBLES_POP_MOD) {
 				this.level.addParticle(ParticleTypes.BUBBLE_POP, this.x, this.y, this.z, 0, 0, 0);
 			}
 			original.call(instance);

@@ -1,4 +1,11 @@
 package net.lunade.particletweaks;
 
-public class ParticleTweaks {
+import net.fabricmc.api.ModInitializer;
+
+public class ParticleTweaks implements ModInitializer {
+
+	@Override
+	public void onInitialize() {
+
+	}
 }
