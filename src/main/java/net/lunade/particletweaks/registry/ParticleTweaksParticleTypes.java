@@ -23,7 +23,10 @@ public class ParticleTweaksParticleTypes {
 	public static final SimpleParticleType SPLASH = register("splash");
 	public static final SimpleParticleType CAVE_DUST = register("cave_dust");
 	public static final SimpleParticleType POOF = register("poof");
-
+	public static final SimpleParticleType FLARE = register("flare");
+	public static final SimpleParticleType SOUL_FLARE = register("soul_flare");
+	public static final SimpleParticleType COMFY_SMOKE_A = register("comfy_smoke_a");
+	public static final SimpleParticleType COMFY_SMOKE_B = register("comfy_smoke_b");
 	public static void init() {
 	}
 

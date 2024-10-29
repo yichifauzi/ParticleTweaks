@@ -8,6 +8,8 @@
     "client.trailer.LavaFluidMixin",
     "client.trailer.LevelRendererMixin",
     "client.trailer.SpellParticleMixin",
+    "client.trailer.TorchBlockMixin",
+    "client.trailer.WallTorchBlockMixin",
     "client.trailer.WaterFluidMixin",
     "client.tweaks.BaseAshSmokeParticleMixin",
     "client.tweaks.BreakingItemParticleMixin",

@@ -11,6 +11,8 @@ import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.lunade.particletweaks.impl.AmbientParticleUtil;
 import net.lunade.particletweaks.impl.FlowingFluidParticleUtil;
 import net.lunade.particletweaks.particle.CaveDustParticle;
+import net.lunade.particletweaks.particle.ComfySmokeParticle;
+import net.lunade.particletweaks.particle.FlareParticle;
 import net.lunade.particletweaks.particle.FluidFlowParticle;
 import net.lunade.particletweaks.particle.PoofParticle;
 import net.lunade.particletweaks.registry.ParticleTweaksParticleTypes;
@@ -37,5 +39,9 @@ public class ParticleTweaksClient implements ClientModInitializer {
 		particleRegistry.register(ParticleTweaksParticleTypes.SPLASH, FluidFlowParticle.SplashFactory::new);
 		particleRegistry.register(ParticleTweaksParticleTypes.CAVE_DUST, CaveDustParticle.Factory::new);
 		particleRegistry.register(ParticleTweaksParticleTypes.POOF, PoofParticle.Factory::new);
+		particleRegistry.register(ParticleTweaksParticleTypes.FLARE, FlareParticle.Factory::new);
+		particleRegistry.register(ParticleTweaksParticleTypes.SOUL_FLARE, FlareParticle.SoulFactory::new);
+		particleRegistry.register(ParticleTweaksParticleTypes.COMFY_SMOKE_A, ComfySmokeParticle.Factory::new);
+		particleRegistry.register(ParticleTweaksParticleTypes.COMFY_SMOKE_A, ComfySmokeParticle.Factory::new);
 	}
 }
