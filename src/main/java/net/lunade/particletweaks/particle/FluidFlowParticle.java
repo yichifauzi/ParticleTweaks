@@ -79,7 +79,6 @@ public class FluidFlowParticle extends TextureSheetParticle {
 	@Override
 	public void tick() {
 		super.tick();
-
 		if (this.onGround) {
 			this.age = this.lifetime;
 		} else {
@@ -89,13 +88,13 @@ public class FluidFlowParticle extends TextureSheetParticle {
 			float fluidHeight = fluidState.getHeight(this.level, blockPos);
 			boolean isFluidHighEnough = !fluidState.isEmpty() && (fluidHeight + (float) blockPos.getY()) >= this.y;
 			if (isFluidHighEnough) {
-				this.age = Math.clamp(this.age + 1, 0, this.lifetime);
+				if (fluidState.getFlow(this.level, blockPos).horizontalDistance() == 0D) this.age = Math.clamp(this.age + 1, 0, this.lifetime);
 				if (this.floatOnFluid) {
 					if (!fluidState.hasProperty(FlowingFluid.FALLING) || !fluidState.getValue(FlowingFluid.FALLING)) {
-						if (this.yd < 0D) {
+						if (this.yd < 0.01D) {
 							this.yd += 0.05D;
 						}
-						this.yd += (0F - this.yd) * 0.5D;
+						this.yd += (0F - this.yd) * 0.4D;
 						this.y += ((blockPos.getY() + fluidHeight) - this.y) * 0.5D;
 					}
 				}

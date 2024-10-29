@@ -3,6 +3,7 @@ package net.lunade.particletweaks.impl;
 import java.util.ArrayList;
 import java.util.List;
 import net.lunade.particletweaks.registry.ParticleTweaksParticleTypes;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.core.BlockPos;
@@ -95,15 +96,22 @@ public class FlowingFluidParticleUtil {
 		Vec3 rawFlow = state.getFlow(world, pos);
 		if ((!isSource || rawFlow.horizontalDistance() != 0D) && !state.isEmpty()) {
 			Vec3 flowVec = rawFlow.normalize();
-			Direction flowDir = Direction.getNearest(flowVec);
 			float fluidHeight = state.getHeight(world, pos);
 			boolean isDown = state.getValue(FlowingFluid.FALLING);
 			if ((isDown || horizontalParticles) && random.nextInt(isDown ? downChance : horizontalChance) == 0) {
 				if (!isDown) {
-					spawnParticleFromDirection(world, pos, flowDir, 1, false, 0.225D, 0.3D, fluidHeight, random, particle);
+					List<Direction> possibleFlowingDirections = new ArrayList<>();
+					Vec3 flow1 = new Vec3(flowVec.x, 0D, 0D);
+					Vec3 flow2 = new Vec3(0D, 0D, flowVec.z);
+					if (flow1.horizontalDistance() > 0D) possibleFlowingDirections.add(Direction.getNearest(flow1));
+					if (flow2.horizontalDistance() > 0D) possibleFlowingDirections.add(Direction.getNearest(flow2));
+
+					for (Direction direction : possibleFlowingDirections) {
+						spawnParticleFromDirection(world, pos, direction, 1, false, flowVec, 0.225D, 0.3D, fluidHeight, random, particle);
+					}
 				} else {
 					for (Direction direction : Direction.Plane.HORIZONTAL) {
-						spawnParticleFromDirection(world, pos, direction, 1, true, 0.075D, 0.1D, fluidHeight, random, particle);
+						spawnParticleFromDirection(world, pos, direction, 1, true, flowVec, 0.075D, 0.1D, fluidHeight, random, particle);
 					}
 				}
 			}
@@ -118,14 +126,22 @@ public class FlowingFluidParticleUtil {
 						}
 					}
 				} else {
-					BlockPos flowingToPos = pos.relative(flowDir);
-					BlockState flowingToBlockState = world.getBlockState(flowingToPos);
-					if (flowingToBlockState.getCollisionShape(world, flowingToPos).isEmpty()) {
-						FluidState flowingEndFluidState = world.getFluidState(flowingToPos.below());
-						if (flowingEndFluidState.isSource()) {
-							BlockPos immutablePos = pos.immutable();
-							if (!CASCADES.contains(immutablePos)) {
-								CASCADES.add(immutablePos);
+					List<Direction> possibleFlowingDirections = new ArrayList<>();
+					Vec3 flow1 = new Vec3(flowVec.x, 0D, 0D);
+					Vec3 flow2 = new Vec3(0D, 0D, flowVec.z);
+					if (flow1.horizontalDistance() > 0D) possibleFlowingDirections.add(Direction.getNearest(flow1));
+					if (flow2.horizontalDistance() > 0D) possibleFlowingDirections.add(Direction.getNearest(flow2));
+
+					for (Direction direction : possibleFlowingDirections) {
+						BlockPos flowingToPos = pos.relative(direction);
+						BlockState flowingToBlockState = world.getBlockState(flowingToPos);
+						if (flowingToBlockState.getCollisionShape(world, flowingToPos).isEmpty()) {
+							FluidState flowingEndFluidState = world.getFluidState(flowingToPos.below());
+							if (flowingEndFluidState.isSource()) {
+								BlockPos immutablePos = pos.immutable();
+								if (!CASCADES.contains(immutablePos)) {
+									CASCADES.add(immutablePos);
+								}
 							}
 						}
 					}
@@ -140,6 +156,7 @@ public class FlowingFluidParticleUtil {
 		@NotNull Direction direction,
 		int count,
 		boolean isFalling,
+		Vec3 flowVec,
 		double minVelocityScale,
 		double maxVelocityScale,
 		float fluidHeight,
@@ -158,7 +175,7 @@ public class FlowingFluidParticleUtil {
 					yOffset,
 					random.triangle(0D, 0.65D) * Math.abs(direction.getStepX())
 				);
-				Vec3 velocity = directionOffset.scale(random.triangle((minVelocityScale + maxVelocityScale) * 0.5D, maxVelocityScale - minVelocityScale));
+				Vec3 velocity = flowVec.normalize().scale(random.triangle((minVelocityScale + maxVelocityScale) * 0.5D, maxVelocityScale - minVelocityScale));
 				world.addParticle(particle, particleOffsetPos.x, particleOffsetPos.y, particleOffsetPos.z, velocity.x, 0D, velocity.z);
 			}
 		}
@@ -175,12 +192,15 @@ public class FlowingFluidParticleUtil {
 	}
 
 	public static void tickCascades(ClientLevel world) {
+		Minecraft minecraft = Minecraft.getInstance();
+		BlockPos cameraPos = minecraft.gameRenderer.getMainCamera().getBlockPosition();
 		CASCADES.removeIf(blockPos ->
 			!onCascadeTick(
 				world,
 				blockPos,
 				world.getFluidState(blockPos),
-				world.random
+				world.random,
+				cameraPos
 			)
 		);
 	}
@@ -189,55 +209,74 @@ public class FlowingFluidParticleUtil {
 		@NotNull Level world,
 		BlockPos pos,
 		@NotNull FluidState state,
-		RandomSource random
+		RandomSource random,
+		BlockPos cameraPos
 	) {
 		if (!world.isLoaded(pos)) return false;
 
+		int camDifferenceX = Math.abs(cameraPos.getZ() - pos.getZ());
+		int camDifferenceZ = Math.abs(cameraPos.getZ() - pos.getZ());
+		if ((camDifferenceX > 16 || camDifferenceZ > 16) && random.nextBoolean()) return true;
+		if ((camDifferenceX > 32 || camDifferenceZ > 32)) return true;
+
 		if (!state.isSource() && !state.isEmpty()) {
-			int cascadeStrength = 2;
+			int cascadeStrength = 1;
 			Vec3 rawFlow = state.getFlow(world, pos);
+			List<Direction> validDirections = new ArrayList<>();
+
 			Vec3 flowVec = rawFlow.normalize();
-			Direction flowDir = Direction.getNearest(flowVec);
 			boolean isDown = state.hasProperty(FlowingFluid.FALLING) && state.getValue(FlowingFluid.FALLING);
-			boolean spawnParticles = false;
 
 			if (isDown) {
-				FluidState belowFluidState = world.getFluidState(pos.below());
-				if (belowFluidState.isSource()) {
-					for (Direction direction : Direction.Plane.HORIZONTAL) {
-						FluidState otherFluidState = world.getFluidState(pos.relative(direction));
-						if (otherFluidState.is(state.getType()) && otherFluidState.hasProperty(FlowingFluid.FALLING) && otherFluidState.getValue(FlowingFluid.FALLING)) {
-							cascadeStrength += 1;
+				for (Direction direction : Direction.Plane.HORIZONTAL) {
+					BlockPos otherPos = pos.relative(direction);
+					BlockState otherBlockState = world.getBlockState(otherPos);
+					FluidState otherFluidState = otherBlockState.getFluidState();
+					if (otherFluidState.is(state.getType()) && otherFluidState.hasProperty(FlowingFluid.FALLING) && otherFluidState.getValue(FlowingFluid.FALLING)) {
+						cascadeStrength += 1;
+					} else if (otherFluidState.isEmpty() && otherBlockState.getCollisionShape(world, pos).isEmpty()) {
+						BlockPos belowOtherPos = otherPos.below();
+						FluidState belowOtherFluidState = world.getFluidState(belowOtherPos);
+						if (belowOtherFluidState.isSource()) {
+							validDirections.add(direction);
 						}
 					}
+				}
 
-					FluidState aboveFluidState = world.getFluidState(pos.above());
-					if (aboveFluidState.is(state.getType()) && aboveFluidState.hasProperty(FlowingFluid.FALLING) && aboveFluidState.getValue(FlowingFluid.FALLING)) {
-						cascadeStrength += 1;
-					}
-
-					spawnParticles = true;
+				FluidState aboveFluidState = world.getFluidState(pos.above());
+				if (aboveFluidState.is(state.getType()) && aboveFluidState.hasProperty(FlowingFluid.FALLING) && aboveFluidState.getValue(FlowingFluid.FALLING)) {
+					cascadeStrength += 1;
 				}
 			} else {
-				BlockPos flowingToPos = pos.relative(flowDir);
-				BlockState flowingToBlockState = world.getBlockState(flowingToPos);
-				if (flowingToBlockState.getCollisionShape(world, flowingToPos).isEmpty()) {
-					FluidState flowingEndFluidState = world.getFluidState(flowingToPos.below());
-					if (flowingEndFluidState.isSource()) {
-						spawnParticles = true;
+				List<Direction> possibleFlowingDirections = new ArrayList<>();
+				Vec3 flow1 = new Vec3(flowVec.x, 0D, 0D);
+				Vec3 flow2 = new Vec3(0D, 0D, flowVec.z);
+				if (flow1.horizontalDistance() > 0D) possibleFlowingDirections.add(Direction.getNearest(flow1));
+				if (flow2.horizontalDistance() > 0D) possibleFlowingDirections.add(Direction.getNearest(flow2));
+
+				for (Direction direction : possibleFlowingDirections) {
+					BlockPos flowingToPos = pos.relative(direction);
+					BlockState flowingToBlockState = world.getBlockState(flowingToPos);
+					if (flowingToBlockState.getCollisionShape(world, flowingToPos).isEmpty()) {
+						FluidState flowingEndFluidState = world.getFluidState(flowingToPos.below());
+						if (flowingEndFluidState.isSource()) {
+							validDirections.add(direction);
+						}
 					}
 				}
 			}
 
-			if (spawnParticles) {
-				List<Direction> directions = isDown ? Direction.Plane.HORIZONTAL.shuffledCopy(random) : List.of(flowDir);
-				for (Direction direction : directions) {
+			if (!validDirections.isEmpty()) {
+				for (Direction direction : validDirections) {
+					int firstStrength = (int) (cascadeStrength * 1.25D);
+					int secondStrength = (int) (cascadeStrength * 1.5D);
 					spawnParticleFromDirection(
 						world,
 						pos,
 						direction,
-						random.nextInt((int) (cascadeStrength * 1.25D), (int) (cascadeStrength * 1.5D)),
+						random.nextInt(firstStrength, Math.max(firstStrength + 1, secondStrength)),
 						true,
+						Vec3.atLowerCornerOf(direction.getNormal()),
 						0.05D,
 						0.2D,
 						0.6F,
