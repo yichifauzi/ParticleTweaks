@@ -38,7 +38,7 @@ public class CaveDustParticle extends RisingParticle {
 		this.setSize(0.01F, 0.02F);
 		this.pickSprite(spriteProvider);
 		this.hasPhysics = true;
-		this.alpha = 0.15F;
+		this.alpha = 0.2F;
 
 		if (this instanceof ParticleTweakInterface particleTweakInterface) {
 			particleTweakInterface.particleTweaks$setNewSystem(true);
@@ -46,7 +46,7 @@ public class CaveDustParticle extends RisingParticle {
 			particleTweakInterface.particleTweaks$setSlowsInFluid(true);
 			particleTweakInterface.particleTweaks$setMovesWithFluid(true);
 			particleTweakInterface.particleTweaks$setCanBurn(true);
-			particleTweakInterface.particleTweaks$setMaxAlpha(0.15F);
+			particleTweakInterface.particleTweaks$setMaxAlpha(0.2F);
 		}
 	}
 
