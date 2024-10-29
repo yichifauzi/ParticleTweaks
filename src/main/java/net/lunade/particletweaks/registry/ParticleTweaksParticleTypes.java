@@ -20,6 +20,9 @@ import org.jetbrains.annotations.NotNull;
 public class ParticleTweaksParticleTypes {
 	public static final SimpleParticleType FLOWING_LAVA = register("flowing_lava");
 	public static final SimpleParticleType FLOWING_WATER = register("flowing_water");
+	public static final SimpleParticleType SMALL_CASCADE = register("small_cascade");
+	public static final SimpleParticleType CASCADE_A = register("cascade_a");
+	public static final SimpleParticleType CASCADE_B = register("cascade_b");
 	public static final SimpleParticleType SPLASH = register("splash");
 	public static final SimpleParticleType CAVE_DUST = register("cave_dust");
 	public static final SimpleParticleType POOF = register("poof");
@@ -27,8 +30,6 @@ public class ParticleTweaksParticleTypes {
 	public static final SimpleParticleType SOUL_FLARE = register("soul_flare");
 	public static final SimpleParticleType COMFY_SMOKE_A = register("comfy_smoke_a");
 	public static final SimpleParticleType COMFY_SMOKE_B = register("comfy_smoke_b");
-	public static final SimpleParticleType CASCADE_A = register("cascade_a");
-	public static final SimpleParticleType CASCADE_B = register("cascade_b");
 	public static void init() {
 	}
 

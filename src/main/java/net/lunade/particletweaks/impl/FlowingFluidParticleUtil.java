@@ -116,6 +116,7 @@ public class FlowingFluidParticleUtil {
 								possibleFlowingDirections.get((int) (Math.random() * possibleFlowingDirections.size())),
 								1,
 								false,
+								0D,
 								0.225D,
 								0.3D,
 								fluidHeight,
@@ -126,7 +127,19 @@ public class FlowingFluidParticleUtil {
 					}
 				} else {
 					for (Direction direction : Direction.Plane.HORIZONTAL) {
-						spawnParticleFromDirection(world, pos, direction, count, true, 0.075D, 0.1D, fluidHeight, random, particle);
+						spawnParticleFromDirection(
+							world,
+							pos,
+							direction,
+							count,
+							true,
+							0D,
+							0.075D,
+							0.1D,
+							fluidHeight,
+							random,
+							particle
+						);
 					}
 				}
 			}
@@ -171,6 +184,7 @@ public class FlowingFluidParticleUtil {
 		@NotNull Direction direction,
 		int count,
 		boolean isFalling,
+		double yVelocity,
 		double minVelocityScale,
 		double maxVelocityScale,
 		float fluidHeight,
@@ -192,7 +206,16 @@ public class FlowingFluidParticleUtil {
 				Vec3 velocity = directionOffset
 					.scale(0.75D)
 					.scale(random.triangle((minVelocityScale + maxVelocityScale) * 0.5D, maxVelocityScale - minVelocityScale));
-				world.addParticle(particle, particleOffsetPos.x, particleOffsetPos.y, particleOffsetPos.z, velocity.x, 0D, velocity.z);
+
+				world.addParticle(
+					particle,
+					particleOffsetPos.x,
+					particleOffsetPos.y,
+					particleOffsetPos.z,
+					velocity.x,
+					yVelocity,
+					velocity.z
+				);
 			}
 		}
 	}
@@ -295,19 +318,23 @@ public class FlowingFluidParticleUtil {
 				for (Direction direction : validDirections) {
 					int firstStrength = (int) (cascadeStrength * 1.25D);
 					int secondStrength = (int) (cascadeStrength * 1.5D);
+					boolean largeCascade = random.nextFloat() <= largeCascadeChance;
+					boolean isSmallWater = !largeCascade && random.nextFloat() <= 0.05F;
 					spawnParticleFromDirection(
 						world,
 						pos,
 						direction,
 						random.nextInt(firstStrength, Math.max(firstStrength + 1, secondStrength)),
 						true,
-						0.05D,
-						0.2D,
-						0.6F,
+						largeCascade ? 0.2D : isSmallWater ? 0.2D : 0.125D,
+						isSmallWater ? 0.2D : largeCascade ? 0.1D : 0.05D,
+						isSmallWater ? 0.4D : largeCascade ? 0.3D : 0.225D,
+						largeCascade ? 0.3F : 0.05F,
 						random,
-						random.nextFloat() <= largeCascadeChance ?
+						largeCascade ?
 							random.nextBoolean() ? ParticleTweaksParticleTypes.CASCADE_A : ParticleTweaksParticleTypes.CASCADE_B
-							: ParticleTweaksParticleTypes.SPLASH
+							: isSmallWater ?
+							ParticleTweaksParticleTypes.FLOWING_WATER : ParticleTweaksParticleTypes.SMALL_CASCADE
 					);
 				}
 				return true;
