@@ -105,10 +105,7 @@ public class FlowingFluidParticleUtil {
 					Vec3 flow2 = new Vec3(0D, 0D, flowVec.z);
 					if (flow1.horizontalDistance() > 0D) possibleFlowingDirections.add(Direction.getNearest(flow1));
 					if (flow2.horizontalDistance() > 0D) possibleFlowingDirections.add(Direction.getNearest(flow2));
-
-					for (Direction direction : possibleFlowingDirections) {
-						spawnParticleFromDirection(world, pos, direction, 1, false, flowVec, 0.225D, 0.3D, fluidHeight, random, particle);
-					}
+					spawnParticleFromDirection(world, pos, possibleFlowingDirections.get((int) (Math.random() * possibleFlowingDirections.size())), 1, false, flowVec, 0.225D, 0.3D, fluidHeight, random, particle);
 				} else {
 					for (Direction direction : Direction.Plane.HORIZONTAL) {
 						spawnParticleFromDirection(world, pos, direction, 1, true, flowVec, 0.075D, 0.1D, fluidHeight, random, particle);
