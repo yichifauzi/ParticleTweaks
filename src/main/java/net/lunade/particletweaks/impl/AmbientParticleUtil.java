@@ -23,8 +23,11 @@ public class AmbientParticleUtil {
 	private static void animateTick(@NotNull ClientLevel level, int posX, int posY, int posZ) {
 		RandomSource randomSource = level.random;
 		BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
-		for (int i = 0; i < 40; ++i) {
+		for (int i = 0; i < 30; ++i) {
 			spawnCaveDustParticles(level, posX, posY, posZ, 32, randomSource, mutableBlockPos);
+		}
+		for (int i = 0; i < 10; ++i) {
+			spawnCaveDustParticles(level, posX, posY, posZ, 16, randomSource, mutableBlockPos);
 		}
 	}
 
