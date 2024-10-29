@@ -37,7 +37,7 @@ public class AmbientParticleUtil {
 		int i = posX + random.nextIntBetweenInclusive(-range, range);
 		int j = posY + random.nextIntBetweenInclusive(-range, range);
 		int k = posZ + random.nextIntBetweenInclusive(-range, range);
-		int heightMapY = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, i, k);
+		int heightMapY = level.getHeight(Heightmap.Types.WORLD_SURFACE, i, k);
 		blockPos.set(i, j, k);
 
 		if (heightMapY > j
