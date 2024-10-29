@@ -42,6 +42,7 @@ public class FluidFlowParticle extends TextureSheetParticle {
 			this.gCol = FastColor.ARGB32.green(LAVA_COLOR) / 255F;
 			this.quadSize *= 0.75F;
 			this.endWhenUnderFluid = false;
+			this.setSize(0.078125F, 0.078125F);
 		} else if (fluid.is(FluidTags.WATER)) {
 			int waterColor = world.getBiome(BlockPos.containing(d, e, f)).value().getWaterColor();
 			this.rCol = Math.clamp(((FastColor.ARGB32.red(waterColor) / 255F) * (float)world.random.triangle(1.25D, 0.25D)), 0F, 1F);
@@ -50,6 +51,7 @@ public class FluidFlowParticle extends TextureSheetParticle {
 			this.alpha = 0.6F;
 			this.quadSize *= 0.5F;
 			this.endWhenUnderFluid = false;
+			this.setSize(0.0625F, 0.0625F);
 		} else {
 			int waterColor = world.getBiome(BlockPos.containing(d, e, f)).value().getWaterColor();
 			this.rCol = Math.clamp(((FastColor.ARGB32.red(waterColor) / 255F) * (float)world.random.triangle(1.35D, 0.4D)), 0F, 1F);
