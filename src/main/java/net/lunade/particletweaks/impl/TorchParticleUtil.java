@@ -98,7 +98,7 @@ public class TorchParticleUtil {
 			z += 0.27 * (double)opposite.getStepZ();
 		}
 
-		if (tickCount % 2 == 0) {
+		if (tickCount % 5 == 0) {
 			world.addParticle(flareParticle, x, y - 0.05, z, 0.0D, 0.0D, 0.0D);
 		}
 
