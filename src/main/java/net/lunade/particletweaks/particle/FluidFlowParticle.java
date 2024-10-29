@@ -86,14 +86,17 @@ public class FluidFlowParticle extends TextureSheetParticle {
 			BlockPos blockPos = BlockPos.containing(this.x, this.y, this.z);
 			BlockState blockState = this.level.getBlockState(blockPos);
 			FluidState fluidState = blockState.getFluidState();
-			boolean isFluidHighEnough = !fluidState.isEmpty() && (fluidState.getHeight(this.level, blockPos) + (float) blockPos.getY()) >= this.y;
+			float fluidHeight = fluidState.getHeight(this.level, blockPos);
+			boolean isFluidHighEnough = !fluidState.isEmpty() && (fluidHeight + (float) blockPos.getY()) >= this.y;
 			if (isFluidHighEnough) {
 				this.age = Math.clamp(this.age + 1, 0, this.lifetime);
 				if (this.floatOnFluid) {
 					if (!fluidState.hasProperty(FlowingFluid.FALLING) || !fluidState.getValue(FlowingFluid.FALLING)) {
-						if (this.yd <= 0.05D) {
+						if (this.yd < 0D) {
 							this.yd += 0.05D;
 						}
+						this.yd += (0F - this.yd) * 0.5D;
+						this.y += ((blockPos.getY() + fluidHeight) - this.y) * 0.5D;
 					}
 				}
 				if (this.endWhenUnderFluid) {

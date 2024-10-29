@@ -91,8 +91,9 @@ public class FlowingFluidParticleUtil {
 		boolean createCascades,
 		ParticleOptions particle
 	) {
-		if (!state.isSource() && !state.isEmpty()) {
-			Vec3 rawFlow = state.getFlow(world, pos);
+		boolean isSource = state.isSource();
+		Vec3 rawFlow = state.getFlow(world, pos);
+		if ((!isSource || rawFlow.horizontalDistance() != 0D) && !state.isEmpty()) {
 			Vec3 flowVec = rawFlow.normalize();
 			Direction flowDir = Direction.getNearest(flowVec);
 			float fluidHeight = state.getHeight(world, pos);
@@ -107,7 +108,7 @@ public class FlowingFluidParticleUtil {
 				}
 			}
 
-			if (createCascades) {
+			if (!isSource && createCascades) {
 				if (isDown) {
 					FluidState belowFluidState = world.getFluidState(pos.below());
 					if (belowFluidState.isSource()) {
@@ -149,7 +150,7 @@ public class FlowingFluidParticleUtil {
 		BlockState otherState = world.getBlockState(otherPos);
 		if (otherState.getCollisionShape(world, otherPos).isEmpty() && (otherState.getFluidState().isEmpty() || !isFalling)) {
 			Vec3 directionOffset = Vec3.atLowerCornerOf(direction.getNormal()).scale(0.5D);
-			Vec3 offsetPos = pos.getBottomCenter().add(directionOffset);
+			Vec3 offsetPos = pos.getBottomCenter().add(isFalling ? directionOffset : Vec3.ZERO);
 			for (int i = 0; i < count; i++) {
 				double yOffset = isFalling ? random.nextDouble() * fluidHeight : fluidHeight;
 				Vec3 particleOffsetPos = offsetPos.add(
@@ -193,7 +194,7 @@ public class FlowingFluidParticleUtil {
 		if (!world.isLoaded(pos)) return false;
 
 		if (!state.isSource() && !state.isEmpty()) {
-			int cascadeStrength = 3;
+			int cascadeStrength = 2;
 			Vec3 rawFlow = state.getFlow(world, pos);
 			Vec3 flowVec = rawFlow.normalize();
 			Direction flowDir = Direction.getNearest(flowVec);
