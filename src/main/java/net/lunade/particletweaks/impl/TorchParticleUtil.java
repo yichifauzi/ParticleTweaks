@@ -102,9 +102,9 @@ public class TorchParticleUtil {
 			world.addParticle(flareParticle, x, y - 0.05, z, 0.0D, 0.0D, 0.0D);
 		}
 
-		if (tickCount % 10 == 0) {
+		if (tickCount % 8 == 0) {
 			world.addParticle(
-				tickCount % 20 == 0 ?
+				tickCount % 16 == 0 ?
 					ParticleTweaksParticleTypes.COMFY_SMOKE_B : ParticleTweaksParticleTypes.COMFY_SMOKE_A,
 				x,
 				y,
