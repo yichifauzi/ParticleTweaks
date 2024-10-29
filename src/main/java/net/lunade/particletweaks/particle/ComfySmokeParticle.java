@@ -21,10 +21,16 @@ package net.lunade.particletweaks.particle;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.lunade.particletweaks.impl.ParticleTweakInterface;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.particle.*;
+import net.minecraft.client.particle.Particle;
+import net.minecraft.client.particle.ParticleProvider;
+import net.minecraft.client.particle.ParticleRenderType;
+import net.minecraft.client.particle.RisingParticle;
+import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.core.particles.SimpleParticleType;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector3f;
 
 @Environment(EnvType.CLIENT)
 public class ComfySmokeParticle extends RisingParticle {
@@ -32,8 +38,6 @@ public class ComfySmokeParticle extends RisingParticle {
 
 	ComfySmokeParticle(@NotNull ClientLevel level, @NotNull SpriteSet spriteProvider, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
 		super(level, x, y - 0.125D, z, velocityX, velocityY, velocityZ);
-		this.xd = Math.sin((this.age * Math.PI) / 20D) * 0.02D;
-		this.zd = Math.sin((this.age * Math.PI) / 20D) * 0.02D;
 		this.setSize(0.01F, 0.02F);
 		this.setSpriteFromAge(spriteProvider);
 		this.sprites = spriteProvider;
@@ -54,9 +58,15 @@ public class ComfySmokeParticle extends RisingParticle {
 	@Override
 	public void tick() {
 		super.tick();
-		this.xd = Math.sin((this.age * Math.PI) / 19D) * 0.015D;
-		this.zd = Math.sin((this.age * Math.PI) / 19D) * 0.015D;
 		this.setSpriteFromAge(this.sprites);
+
+		Minecraft minecraft = Minecraft.getInstance();
+		Vector3f leftVector = minecraft.gameRenderer.getMainCamera().getLeftVector();
+		leftVector = new Vector3f(leftVector.x(), 0F, leftVector.z()).normalize();
+
+		double sin = Math.sin((this.age * Math.PI) / 19D);
+		this.xd = sin * (0.015D * leftVector.x());
+		this.zd = sin * (0.015D * leftVector.z());
 	}
 
 	@Override

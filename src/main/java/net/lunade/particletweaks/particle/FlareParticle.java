@@ -3,13 +3,20 @@ package net.lunade.particletweaks.particle;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.particle.*;
+import net.minecraft.client.particle.Particle;
+import net.minecraft.client.particle.ParticleProvider;
+import net.minecraft.client.particle.ParticleRenderType;
+import net.minecraft.client.particle.RisingParticle;
+import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 @Environment(EnvType.CLIENT)
 public class FlareParticle extends RisingParticle {
+	private float xDir;
+	private float zDir;
 	private float rStart = 1F;
 	private float rEnd = 1F;
 	private float gStart = 1F;
@@ -19,14 +26,26 @@ public class FlareParticle extends RisingParticle {
 
 	protected FlareParticle(ClientLevel world, double x, double y, double z, double velocityX, double velocityY, double velocityZ, SpriteSet spriteProvider) {
 		super(world, x, y, z, 0D, 0D, 0D);
-		this.xd = (this.random.nextFloat() - 0.5F) * 0.035F;
-		this.zd = (this.random.nextFloat() - 0.5F) * 0.035F;
+		Vec3 rotation = new Vec3(1D, 0D, 0D).yRot((this.random.nextFloat() * 360F) * Mth.DEG_TO_RAD);
+		this.xDir = (float) rotation.x;
+		this.zDir = (float) rotation.z;
 		this.friction = 0.9F;
 		this.pickSprite(spriteProvider);
 		this.yd = 0.03D;
 		this.quadSize = 0.075F;
 		this.lifetime = (int)(6D / ((double)this.random.nextFloat() * 0.8D + 0.2D)) + 15;
 		this.setSpriteFromAge(spriteProvider);
+		double sin = Math.cos(0D / (this.lifetime - 3));
+		this.xd = sin * (0.1D) * this.xDir;
+		this.zd = sin * (0.1D) * this.zDir;
+	}
+
+	@Override
+	public void tick() {
+		super.tick();
+		double sin = Math.cos((this.age * Math.PI) / (this.lifetime - 3));
+		this.xd = sin * (0.025D) * this.xDir;
+		this.zd = sin * (0.025D) * this.zDir;
 	}
 
 	@Override
