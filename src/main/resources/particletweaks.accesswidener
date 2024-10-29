@@ -4,3 +4,4 @@ accessible class net/minecraft/client/particle/DripParticle$FallAndLandParticle
 accessible field net/minecraft/client/particle/Particle age I
 accessible field net/minecraft/client/particle/Particle roll F
 accessible field net/minecraft/client/particle/Particle oRoll F
+accessible field net/minecraft/world/level/block/TorchBlock flameParticle Lnet/minecraft/core/particles/SimpleParticleType;

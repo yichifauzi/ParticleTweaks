@@ -10,6 +10,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.lunade.particletweaks.impl.AmbientParticleUtil;
 import net.lunade.particletweaks.impl.FlowingFluidParticleUtil;
+import net.lunade.particletweaks.impl.TorchParticleUtil;
 import net.lunade.particletweaks.particle.CaveDustParticle;
 import net.lunade.particletweaks.particle.ComfySmokeParticle;
 import net.lunade.particletweaks.particle.FlareParticle;
@@ -22,12 +23,22 @@ public class ParticleTweaksClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
-		ClientChunkEvents.CHUNK_UNLOAD.register((clientLevel, levelChunk) -> FlowingFluidParticleUtil.clearCascadesInChunk(levelChunk.getPos()));
-		ClientLifecycleEvents.CLIENT_STOPPING.register((clientLevel) -> FlowingFluidParticleUtil.clearCascades());
-		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> FlowingFluidParticleUtil.clearCascades());
+		ClientChunkEvents.CHUNK_UNLOAD.register((clientLevel, levelChunk) -> {
+			FlowingFluidParticleUtil.clearCascadesInChunk(levelChunk.getPos());
+			TorchParticleUtil.clearTorchesInChunk(levelChunk.getPos());
+		});
+		ClientLifecycleEvents.CLIENT_STOPPING.register((clientLevel) -> {
+			FlowingFluidParticleUtil.clearCascades();
+			TorchParticleUtil.clearTorches();
+		});
+		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
+			FlowingFluidParticleUtil.clearCascades();
+			TorchParticleUtil.clearTorches();
+		});
 
 		ClientTickEvents.START_WORLD_TICK.register((clientLevel) -> {
 			FlowingFluidParticleUtil.tickCascades(clientLevel);
+			TorchParticleUtil.tickTorches(clientLevel);
 			AmbientParticleUtil.tick(clientLevel);
 		});
 
