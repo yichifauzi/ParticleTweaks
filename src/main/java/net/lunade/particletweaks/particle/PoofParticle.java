@@ -24,13 +24,13 @@ public class PoofParticle extends TextureSheetParticle {
 		this.yd = velocityY + (Math.random() * 2D - 1D) * 0.05D;
 		this.zd = velocityZ + (Math.random() * 2D - 1D) * 0.05D;
 		this.quadSize = (0.1F * (this.random.nextFloat() * this.random.nextFloat() * 6F + 1F)) * 1.4F;
-		this.lifetime = (int)(6D / ((double)this.random.nextFloat() * 0.8D + 0.2D)) + 2;
+		this.lifetime = (int)((6D / ((double)this.random.nextFloat() * 0.8D + 0.2D)) * 0.75D);
 		this.setSpriteFromAge(spriteProvider);
 
 		if (this instanceof ParticleTweakInterface particleTweakInterface) {
 			particleTweakInterface.particleTweaks$setNewSystem(true);
-			particleTweakInterface.particleTweaks$setScaler(0.35F);
-			particleTweakInterface.particleTweaks$setScalesToZero();
+			particleTweakInterface.particleTweaks$setScaler(0.25F);
+			//particleTweakInterface.particleTweaks$setScalesToZero();
 		}
 	}
 
