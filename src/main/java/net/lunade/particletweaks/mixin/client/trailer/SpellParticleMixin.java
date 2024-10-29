@@ -43,7 +43,7 @@ public abstract class SpellParticleMixin extends TextureSheetParticle implements
 		this.particleTweaks$setSwitchesExit(false);
 
 		RandomSource random = RandomSource.createNewThreadLocalInstance();
-		this.particleTweaks$yRotPerTick = (random.nextFloat() - 0.5F) * 0.05F;
+		this.particleTweaks$yRotPerTick = (random.nextFloat() - 0.5F) * 0.075F;
 		this.particleTweaks$zRotPerTick = (random.nextFloat() - 0.5F) * 0.075F;
 	}
 
