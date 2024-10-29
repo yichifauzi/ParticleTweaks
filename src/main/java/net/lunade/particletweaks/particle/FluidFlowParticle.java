@@ -45,9 +45,9 @@ public class FluidFlowParticle extends TextureSheetParticle {
 			this.setSize(0.078125F, 0.078125F);
 		} else if (fluid.is(FluidTags.WATER)) {
 			int waterColor = world.getBiome(BlockPos.containing(d, e, f)).value().getWaterColor();
-			this.rCol = Math.clamp(((FastColor.ARGB32.red(waterColor) / 255F) * (float)world.random.triangle(1.25D, 0.25D)), 0F, 1F);
-			this.bCol = Math.clamp(((FastColor.ARGB32.blue(waterColor) / 255F) * (float)world.random.triangle(1.25D, 0.25D)), 0F, 1F);
-			this.gCol = Math.clamp(((FastColor.ARGB32.green(waterColor) / 255F) * (float)world.random.triangle(1.25D, 0.25D)), 0F, 1F);
+			this.rCol = Math.clamp(((FastColor.ARGB32.red(waterColor) / 255F) * (float)world.random.triangle(1.3D, 0.3D)), 0F, 1F);
+			this.bCol = Math.clamp(((FastColor.ARGB32.blue(waterColor) / 255F) * (float)world.random.triangle(1.3D, 0.3D)), 0F, 1F);
+			this.gCol = Math.clamp(((FastColor.ARGB32.green(waterColor) / 255F) * (float)world.random.triangle(1.3D, 0.3D)), 0F, 1F);
 			this.alpha = 0.6F;
 			this.quadSize *= 0.5F;
 			this.endWhenUnderFluid = false;
