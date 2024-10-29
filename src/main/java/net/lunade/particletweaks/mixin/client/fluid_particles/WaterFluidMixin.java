@@ -29,6 +29,7 @@ public class WaterFluidMixin {
 			state,
 			random,
 			3,
+			3,
 			1,
 			true,
 			true,

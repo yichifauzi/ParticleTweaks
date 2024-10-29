@@ -86,12 +86,14 @@ public class FlowingFluidParticleUtil {
 		BlockPos pos,
 		@NotNull FluidState state,
 		RandomSource random,
+		int maxCount,
 		int horizontalChance,
 		int downChance,
 		boolean horizontalParticles,
 		boolean createCascades,
 		ParticleOptions particle
 	) {
+		int count = maxCount == 1 ? 1 : random.nextInt(1, maxCount);
 		boolean isSource = state.isSource();
 		Vec3 rawFlow = state.getFlow(world, pos);
 		if ((!isSource || rawFlow.horizontalDistance() != 0D) && !state.isEmpty()) {
@@ -107,22 +109,24 @@ public class FlowingFluidParticleUtil {
 					if (flow2.horizontalDistance() > 0D) possibleFlowingDirections.add(Direction.getNearest(flow2));
 
 					if (!possibleFlowingDirections.isEmpty()) {
-						spawnParticleFromDirection(
-							world,
-							pos,
-							possibleFlowingDirections.get((int) (Math.random() * possibleFlowingDirections.size())),
-							1,
-							false,
-							0.225D,
-							0.3D,
-							fluidHeight,
-							random,
-							particle
-						);
+						for (int i = 0; i < count; i++) {
+							spawnParticleFromDirection(
+								world,
+								pos,
+								possibleFlowingDirections.get((int) (Math.random() * possibleFlowingDirections.size())),
+								1,
+								false,
+								0.225D,
+								0.3D,
+								fluidHeight,
+								random,
+								particle
+							);
+						}
 					}
 				} else {
 					for (Direction direction : Direction.Plane.HORIZONTAL) {
-						spawnParticleFromDirection(world, pos, direction, 1, true, 0.075D, 0.1D, fluidHeight, random, particle);
+						spawnParticleFromDirection(world, pos, direction, count, true, 0.075D, 0.1D, fluidHeight, random, particle);
 					}
 				}
 			}
@@ -185,7 +189,9 @@ public class FlowingFluidParticleUtil {
 					yOffset,
 					random.triangle(0D, 0.65D) * Math.abs(direction.getStepX())
 				);
-				Vec3 velocity = directionOffset.scale(random.triangle((minVelocityScale + maxVelocityScale) * 0.5D, maxVelocityScale - minVelocityScale));
+				Vec3 velocity = directionOffset
+					.scale(0.75D)
+					.scale(random.triangle((minVelocityScale + maxVelocityScale) * 0.5D, maxVelocityScale - minVelocityScale));
 				world.addParticle(particle, particleOffsetPos.x, particleOffsetPos.y, particleOffsetPos.z, velocity.x, 0D, velocity.z);
 			}
 		}

@@ -28,6 +28,7 @@ public class LavaFluidMixin {
 			pos,
 			state,
 			random,
+			1,
 			0,
 			10,
 			false,
