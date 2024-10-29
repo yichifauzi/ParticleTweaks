@@ -40,7 +40,7 @@ public class AmbientParticleUtil {
 		int heightMapY = level.getHeight(Heightmap.Types.WORLD_SURFACE, i, k);
 		blockPos.set(i, j, k);
 
-		if (heightMapY > j
+		if (heightMapY > j + 8
 			&& level.getBlockState(blockPos).isAir()
 			&& !level.canSeeSkyFromBelowWater(blockPos)
 			&& level.getBrightness(LightLayer.SKY, blockPos) == 0
