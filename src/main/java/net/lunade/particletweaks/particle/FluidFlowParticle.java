@@ -55,7 +55,7 @@ public class FluidFlowParticle extends TextureSheetParticle {
 			this.alpha = 0.6F;
 			this.quadSize *= 0.5F;
 			this.endWhenUnderFluid = false;
-			this.setSize(0.0625F, 0.0625F);
+			this.setSize(0.0325F, 0.0325F);
 		} else {
 			this.alpha = cascade ? 0.4F : 0.175F;
 			this.quadSize *= 2F;

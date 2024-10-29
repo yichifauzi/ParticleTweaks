@@ -38,7 +38,7 @@ public class FlareParticle extends RisingParticle {
 		double sin = Math.cos(0D / (this.lifetime - 3));
 		this.xd = sin * (0.1D) * this.xDir;
 		this.zd = sin * (0.1D) * this.zDir;
-		this.setSize(0.0625F, 0.0625F);
+		this.setSize(0.0325F, 0.0325F);
 	}
 
 	@Override
