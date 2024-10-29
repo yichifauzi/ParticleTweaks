@@ -105,10 +105,10 @@ public class FlowingFluidParticleUtil {
 					Vec3 flow2 = new Vec3(0D, 0D, flowVec.z);
 					if (flow1.horizontalDistance() > 0D) possibleFlowingDirections.add(Direction.getNearest(flow1));
 					if (flow2.horizontalDistance() > 0D) possibleFlowingDirections.add(Direction.getNearest(flow2));
-					spawnParticleFromDirection(world, pos, possibleFlowingDirections.get((int) (Math.random() * possibleFlowingDirections.size())), 1, false, flowVec, 0.225D, 0.3D, fluidHeight, random, particle);
+					spawnParticleFromDirection(world, pos, possibleFlowingDirections.get((int) (Math.random() * possibleFlowingDirections.size())), 1, false, 0.225D, 0.3D, fluidHeight, random, particle);
 				} else {
 					for (Direction direction : Direction.Plane.HORIZONTAL) {
-						spawnParticleFromDirection(world, pos, direction, 1, true, flowVec, 0.075D, 0.1D, fluidHeight, random, particle);
+						spawnParticleFromDirection(world, pos, direction, 1, true, 0.075D, 0.1D, fluidHeight, random, particle);
 					}
 				}
 			}
@@ -153,7 +153,6 @@ public class FlowingFluidParticleUtil {
 		@NotNull Direction direction,
 		int count,
 		boolean isFalling,
-		Vec3 flowVec,
 		double minVelocityScale,
 		double maxVelocityScale,
 		float fluidHeight,
@@ -172,7 +171,7 @@ public class FlowingFluidParticleUtil {
 					yOffset,
 					random.triangle(0D, 0.65D) * Math.abs(direction.getStepX())
 				);
-				Vec3 velocity = flowVec.normalize().scale(random.triangle((minVelocityScale + maxVelocityScale) * 0.5D, maxVelocityScale - minVelocityScale));
+				Vec3 velocity = directionOffset.scale(random.triangle((minVelocityScale + maxVelocityScale) * 0.5D, maxVelocityScale - minVelocityScale));
 				world.addParticle(particle, particleOffsetPos.x, particleOffsetPos.y, particleOffsetPos.z, velocity.x, 0D, velocity.z);
 			}
 		}
@@ -273,7 +272,6 @@ public class FlowingFluidParticleUtil {
 						direction,
 						random.nextInt(firstStrength, Math.max(firstStrength + 1, secondStrength)),
 						true,
-						Vec3.atLowerCornerOf(direction.getNormal()),
 						0.05D,
 						0.2D,
 						0.6F,
