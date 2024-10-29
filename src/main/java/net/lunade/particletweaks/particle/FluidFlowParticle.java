@@ -22,16 +22,20 @@ import org.jetbrains.annotations.NotNull;
 @Environment(EnvType.CLIENT)
 public class FluidFlowParticle extends TextureSheetParticle {
 	private static final int LAVA_COLOR = 16743195;
+	private final SpriteSet sprites;
 	private final boolean isLava;
 	private final boolean floatOnFluid;
 	private final boolean endWhenUnderFluid;
 
-	FluidFlowParticle(ClientLevel world, @NotNull SpriteSet spriteProvider, double d, double e, double f, double velX, double velY, double velZ, @NotNull FluidState fluid) {
+	FluidFlowParticle(
+		ClientLevel world, @NotNull SpriteSet spriteProvider, double d, double e, double f, double velX, double velY, double velZ, @NotNull FluidState fluid, boolean cascade
+	) {
 		super(world, d, e, f, velX, velY, velZ);
 		this.xd = velX;
 		this.yd = velY;
 		this.zd = velZ;
-		this.pickSprite(spriteProvider);
+		this.setSpriteFromAge(spriteProvider);
+		this.sprites = spriteProvider;
 		this.isLava = fluid.is(FluidTags.LAVA);
 		this.floatOnFluid = !this.isLava;
 		this.gravity = 0.9F;
@@ -53,14 +57,12 @@ public class FluidFlowParticle extends TextureSheetParticle {
 			this.endWhenUnderFluid = false;
 			this.setSize(0.0625F, 0.0625F);
 		} else {
-			int waterColor = world.getBiome(BlockPos.containing(d, e, f)).value().getWaterColor();
-			this.rCol = Math.clamp(((FastColor.ARGB32.red(waterColor) / 255F) * (float)world.random.triangle(1.35D, 0.4D)), 0F, 1F);
-			this.bCol = Math.clamp(((FastColor.ARGB32.blue(waterColor) / 255F) * (float)world.random.triangle(1.35D, 0.4D)), 0F, 1F);
-			this.gCol = Math.clamp(((FastColor.ARGB32.green(waterColor) / 255F) * (float)world.random.triangle(1.35D, 0.4D)), 0F, 1F);
-			this.alpha = 0.175F;
+			this.alpha = cascade ? 0.4F : 0.175F;
 			this.quadSize *= 2F;
-			this.endWhenUnderFluid = true;
+			this.endWhenUnderFluid = !cascade;
 		}
+
+		this.quadSize *= cascade ? 1.75F : 1F;
 
 		if (this instanceof ParticleTweakInterface particleTweakInterface) {
 			particleTweakInterface.particleTweaks$setNewSystem(true);
@@ -68,7 +70,7 @@ public class FluidFlowParticle extends TextureSheetParticle {
 			particleTweakInterface.particleTweaks$setCanBurn(!this.isLava);
 			particleTweakInterface.particleTweaks$setScalesToZero();
 			particleTweakInterface.particleTweaks$setSwitchesExit(true);
-			particleTweakInterface.particleTweaks$setFluidMovementScale(0.05D);
+			particleTweakInterface.particleTweaks$setFluidMovementScale(!cascade ? 0.05D : 0.125D);
 			particleTweakInterface.particleTweaks$setScaler(0.5F);
 			if (!this.isLava) {
 				if (fluid.is(FluidTags.WATER)) {
@@ -83,6 +85,7 @@ public class FluidFlowParticle extends TextureSheetParticle {
 	@Override
 	public void tick() {
 		super.tick();
+		this.setSpriteFromAge(this.sprites);
 		if (this.onGround) {
 			this.age = this.lifetime;
 		} else {
@@ -92,7 +95,7 @@ public class FluidFlowParticle extends TextureSheetParticle {
 			float fluidHeight = fluidState.getHeight(this.level, blockPos);
 			boolean isFluidHighEnough = !fluidState.isEmpty() && (fluidHeight + (float) blockPos.getY()) >= this.y;
 			if (isFluidHighEnough) {
-				if (fluidState.getFlow(this.level, blockPos).horizontalDistance() == 0D) this.age = Math.clamp(this.age + 1, 0, this.lifetime);
+				if (fluidState.getFlow(this.level, blockPos).horizontalDistance() == 0D) this.age = Math.clamp(this.age + 3, 0, this.lifetime);
 				if (this.floatOnFluid) {
 					if (!fluidState.hasProperty(FlowingFluid.FALLING) || !fluidState.getValue(FlowingFluid.FALLING)) {
 						if (this.yd < 0.01D) {
@@ -126,7 +129,7 @@ public class FluidFlowParticle extends TextureSheetParticle {
 		public Particle createParticle(
 			@NotNull SimpleParticleType particleOptions, @NotNull ClientLevel clientLevel, double x, double y, double z, double g, double h, double i
 		) {
-			return new FluidFlowParticle(clientLevel, this.spriteProvider, x, y, z, g, h, i, Fluids.LAVA.defaultFluidState());
+			return new FluidFlowParticle(clientLevel, this.spriteProvider, x, y, z, g, h, i, Fluids.LAVA.defaultFluidState(), false);
 		}
 	}
 
@@ -137,7 +140,7 @@ public class FluidFlowParticle extends TextureSheetParticle {
 		public Particle createParticle(
 			@NotNull SimpleParticleType particleOptions, @NotNull ClientLevel clientLevel, double x, double y, double z, double g, double h, double i
 		) {
-			return new FluidFlowParticle(clientLevel, this.spriteProvider, x, y, z, g, h, i, Fluids.WATER.defaultFluidState());
+			return new FluidFlowParticle(clientLevel, this.spriteProvider, x, y, z, g, h, i, Fluids.WATER.defaultFluidState(), false);
 		}
 	}
 
@@ -148,7 +151,23 @@ public class FluidFlowParticle extends TextureSheetParticle {
 		public Particle createParticle(
 			@NotNull SimpleParticleType particleOptions, @NotNull ClientLevel clientLevel, double x, double y, double z, double g, double h, double i
 		) {
-			return new FluidFlowParticle(clientLevel, this.spriteProvider, x, y, z, g, h, i, Fluids.EMPTY.defaultFluidState());
+			FluidFlowParticle fluidFlowParticle = new FluidFlowParticle(clientLevel, this.spriteProvider, x, y, z, g, h, i, Fluids.EMPTY.defaultFluidState(), false);
+			int waterColor = clientLevel.getBiome(BlockPos.containing(x, y, z)).value().getWaterColor();
+			fluidFlowParticle.rCol = Math.clamp(((FastColor.ARGB32.red(waterColor) / 255F) * (float)clientLevel.random.triangle(1.35D, 0.4D)), 0F, 1F);
+			fluidFlowParticle.bCol = Math.clamp(((FastColor.ARGB32.blue(waterColor) / 255F) * (float)clientLevel.random.triangle(1.35D, 0.4D)), 0F, 1F);
+			fluidFlowParticle.gCol = Math.clamp(((FastColor.ARGB32.green(waterColor) / 255F) * (float)clientLevel.random.triangle(1.35D, 0.4D)), 0F, 1F);
+			return fluidFlowParticle;
+		}
+	}
+
+	@Environment(EnvType.CLIENT)
+	public record CascadeFactory(SpriteSet spriteProvider) implements ParticleProvider<SimpleParticleType> {
+		@Override
+		@NotNull
+		public Particle createParticle(
+			@NotNull SimpleParticleType particleOptions, @NotNull ClientLevel clientLevel, double x, double y, double z, double g, double h, double i
+		) {
+			return new FluidFlowParticle(clientLevel, this.spriteProvider, x, y, z, g, h, i, Fluids.EMPTY.defaultFluidState(), true);
 		}
 	}
 }

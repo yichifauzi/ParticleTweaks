@@ -27,6 +27,8 @@ public class ParticleTweaksParticleTypes {
 	public static final SimpleParticleType SOUL_FLARE = register("soul_flare");
 	public static final SimpleParticleType COMFY_SMOKE_A = register("comfy_smoke_a");
 	public static final SimpleParticleType COMFY_SMOKE_B = register("comfy_smoke_b");
+	public static final SimpleParticleType CASCADE_A = register("cascade_a");
+	public static final SimpleParticleType CASCADE_B = register("cascade_b");
 	public static void init() {
 	}
 

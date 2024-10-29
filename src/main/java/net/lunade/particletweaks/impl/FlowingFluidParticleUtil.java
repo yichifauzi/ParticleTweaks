@@ -237,6 +237,7 @@ public class FlowingFluidParticleUtil {
 
 		if (!state.isSource() && !state.isEmpty()) {
 			int cascadeStrength = 1;
+			float largeCascadeChance = 0F;
 			Vec3 rawFlow = state.getFlow(world, pos);
 			List<Direction> validDirections = new ArrayList<>();
 
@@ -259,10 +260,18 @@ public class FlowingFluidParticleUtil {
 					}
 				}
 
-				FluidState aboveFluidState = world.getFluidState(pos.above());
-				if (aboveFluidState.is(state.getType()) && aboveFluidState.hasProperty(FlowingFluid.FALLING) && aboveFluidState.getValue(FlowingFluid.FALLING)) {
-					cascadeStrength += 1;
+				int fallingFromHeight = 1;
+				for (int i = 1; i < 20; i++) {
+					FluidState aboveFluidState = world.getFluidState(pos.above(i));
+					if (aboveFluidState.is(state.getType()) && aboveFluidState.hasProperty(FlowingFluid.FALLING) && aboveFluidState.getValue(FlowingFluid.FALLING)) {
+						fallingFromHeight = i;
+					} else {
+						break;
+					}
 				}
+
+				largeCascadeChance = fallingFromHeight >= 10 ? 1F - ((20F - fallingFromHeight) / 10F) : 0F;
+				cascadeStrength += Math.min(fallingFromHeight, 1);
 			} else {
 				List<Direction> possibleFlowingDirections = new ArrayList<>();
 				Vec3 flow1 = new Vec3(flowVec.x, 0D, 0D);
@@ -296,7 +305,9 @@ public class FlowingFluidParticleUtil {
 						0.2D,
 						0.6F,
 						random,
-						ParticleTweaksParticleTypes.SPLASH
+						random.nextFloat() <= largeCascadeChance ?
+							random.nextBoolean() ? ParticleTweaksParticleTypes.CASCADE_A : ParticleTweaksParticleTypes.CASCADE_B
+							: ParticleTweaksParticleTypes.SPLASH
 					);
 				}
 				return true;

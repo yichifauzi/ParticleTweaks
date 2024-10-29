@@ -46,6 +46,10 @@ public class ComfySmokeParticle extends RisingParticle {
 		this.lifetime = 35;
 		this.quadSize *= 1.25F;
 
+		this.rCol = 129F / 255F;
+		this.gCol = 124F / 255F;
+		this.bCol = 118F / 255F;
+
 		if (this instanceof ParticleTweakInterface particleTweakInterface) {
 			particleTweakInterface.particleTweaks$setNewSystem(true);
 			particleTweakInterface.particleTweaks$setScalesToZero();
