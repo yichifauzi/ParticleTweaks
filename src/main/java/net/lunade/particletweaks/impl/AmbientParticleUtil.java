@@ -44,7 +44,7 @@ public class AmbientParticleUtil {
 			&& level.getBlockState(blockPos).isAir()
 			&& !level.canSeeSkyFromBelowWater(blockPos)
 			&& level.getBrightness(LightLayer.SKY, blockPos) == 0
-			&& level.getBrightness(LightLayer.BLOCK, blockPos) <= 12
+			&& random.nextInt(level.getBrightness(LightLayer.BLOCK, blockPos)) == 0
 		) {
 			int levelMin = level.getMinBuildHeight();
 			int levelMax = level.getMaxBuildHeight();
