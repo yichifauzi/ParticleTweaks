@@ -1,4 +1,4 @@
-package net.lunade.particletweaks.mixin.client.fluid_particles;
+package net.lunade.particletweaks.mixin.client.trailer;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -8,15 +8,15 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.level.material.WaterFluid;
+import net.minecraft.world.level.material.LavaFluid;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Environment(EnvType.CLIENT)
-@Mixin(WaterFluid.class)
-public class WaterFluidMixin {
+@Mixin(LavaFluid.class)
+public class LavaFluidMixin {
 
 	@Inject(
 		method = "animateTick",
@@ -28,12 +28,12 @@ public class WaterFluidMixin {
 			pos,
 			state,
 			random,
-			3,
-			3,
 			1,
-			true,
-			true,
-			ParticleTweaksParticleTypes.FLOWING_WATER
+			0,
+			10,
+			false,
+			false,
+			ParticleTweaksParticleTypes.FLOWING_LAVA
 		);
 	}
 }

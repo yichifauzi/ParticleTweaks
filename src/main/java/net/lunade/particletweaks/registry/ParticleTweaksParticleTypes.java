@@ -22,6 +22,7 @@ public class ParticleTweaksParticleTypes {
 	public static final SimpleParticleType FLOWING_WATER = register("flowing_water");
 	public static final SimpleParticleType SPLASH = register("splash");
 	public static final SimpleParticleType CAVE_DUST = register("cave_dust");
+	public static final SimpleParticleType POOF = register("poof");
 
 	public static void init() {
 	}

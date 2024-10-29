@@ -12,6 +12,7 @@ import net.lunade.particletweaks.impl.AmbientParticleUtil;
 import net.lunade.particletweaks.impl.FlowingFluidParticleUtil;
 import net.lunade.particletweaks.particle.CaveDustParticle;
 import net.lunade.particletweaks.particle.FluidFlowParticle;
+import net.lunade.particletweaks.particle.PoofParticle;
 import net.lunade.particletweaks.registry.ParticleTweaksParticleTypes;
 
 @Environment(EnvType.CLIENT)
@@ -35,5 +36,6 @@ public class ParticleTweaksClient implements ClientModInitializer {
 		particleRegistry.register(ParticleTweaksParticleTypes.FLOWING_WATER, FluidFlowParticle.WaterFactory::new);
 		particleRegistry.register(ParticleTweaksParticleTypes.SPLASH, FluidFlowParticle.SplashFactory::new);
 		particleRegistry.register(ParticleTweaksParticleTypes.CAVE_DUST, CaveDustParticle.Factory::new);
+		particleRegistry.register(ParticleTweaksParticleTypes.POOF, PoofParticle.Factory::new);
 	}
 }
