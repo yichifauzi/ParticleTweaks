@@ -25,6 +25,18 @@ import org.jetbrains.annotations.Nullable;
 
 public class FlowingFluidParticleUtil {
 
+	public static boolean isUnderFluid(
+		@NotNull Level level,
+		double x,
+		double y,
+		double z
+	) {
+		BlockPos blockPos = BlockPos.containing(x, y, z);
+		BlockState blockState = level.getBlockState(blockPos);
+		FluidState fluidState = blockState.getFluidState();
+		return !fluidState.isEmpty() && (fluidState.getHeight(level, blockPos) + (float) blockPos.getY()) >= y;
+	}
+
 	public static @Nullable Vec3 handleFluidInteraction(
 		Level level,
 		Vec3 pos,

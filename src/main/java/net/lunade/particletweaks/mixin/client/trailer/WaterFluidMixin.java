@@ -1,10 +1,13 @@
 package net.lunade.particletweaks.mixin.client.trailer;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.lunade.particletweaks.impl.FlowingFluidParticleUtil;
 import net.lunade.particletweaks.registry.ParticleTweaksParticleTypes;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.FluidState;
@@ -17,6 +20,21 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Environment(EnvType.CLIENT)
 @Mixin(WaterFluid.class)
 public class WaterFluidMixin {
+
+	@WrapOperation(
+		method = "animateTick",
+		at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/world/level/Level;addParticle(Lnet/minecraft/core/particles/ParticleOptions;DDDDDD)V"
+		)
+	)
+	public void particleTweaks$useSmallBubble(
+		Level instance, ParticleOptions parameters, double x, double y, double z, double velocityX, double velocityY, double velocityZ, Operation<Void> original
+	) {
+		if (instance.random.nextFloat() <= 0.3F) {
+			original.call(instance, ParticleTweaksParticleTypes.SMALL_BUBBLE, x, y, z, velocityX, velocityY, velocityZ);
+		}
+	}
 
 	@Inject(
 		method = "animateTick",
