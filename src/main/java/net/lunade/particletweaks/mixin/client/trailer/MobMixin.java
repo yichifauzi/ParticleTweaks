@@ -5,6 +5,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import org.spongepowered.asm.mixin.Mixin;
@@ -22,6 +23,7 @@ public class MobMixin {
 		)
 	)
 	public SimpleParticleType particleTweaks$useBubblePoofUnderwater(SimpleParticleType original) {
-		return LivingEntity.class.cast(this).isUnderWater() ? ParticleTypes.BUBBLE : original;
+		LivingEntity livingEntity = LivingEntity.class.cast(this);
+		return livingEntity.level().getFluidState(livingEntity.blockPosition()).is(FluidTags.WATER) ? ParticleTypes.BUBBLE : original;
 	}
 }
