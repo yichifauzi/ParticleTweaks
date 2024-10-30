@@ -47,7 +47,7 @@ public class WaveParticle extends TextureSheetParticle {
 	private final float strength;
 
 	WaveParticle(@NotNull ClientLevel level, @NotNull SpriteSet spriteProvider, double x, double y, double z, float width, float strength) {
-		super(level, x, y + 1D - (0.0625D * 6D), z, 0D, 0D, 0D); // Places half a pixel down from Y
+		super(level, x, y + 1D - (0.0625D * 2.5D), z, 0D, 0D, 0D); // Places half a pixel down from Y
 		this.setSize(width, 1F);
 		this.setSpriteFromAge(spriteProvider);
 		this.quadSize = 0.75F; // 12 / 16

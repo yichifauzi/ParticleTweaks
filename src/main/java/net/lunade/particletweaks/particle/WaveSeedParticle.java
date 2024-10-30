@@ -71,7 +71,7 @@ public class WaveSeedParticle extends NoRenderParticle {
 				y + rotation.y,
 				z + rotation.z * width * random.nextFloat(),
 				velocity.x,
-				strength,
+				strength + (0.15D * random.nextFloat()),
 				velocity.z
 			);
 		}
