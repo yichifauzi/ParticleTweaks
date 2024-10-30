@@ -169,7 +169,9 @@ public abstract class EntityMixin {
 		if (entity.isInWater()) {
 			Vec3 deltaMovement = entity.getDeltaMovement();
 			double movementLength = deltaMovement.length();
-			if (entity.getRandom().nextFloat() < movementLength * 0.75D) {
+			if (movementLength == 0D) return;
+
+			if (entity.getRandom().nextFloat() < movementLength * 0.655D) {
 				Vec3 randomPosInside = new Vec3(entity.getRandomX(1D), entity.getRandomY(), entity.getRandomZ(1D));
 				if (FlowingFluidParticleUtil.isUnderFluid(entity.level(), randomPosInside.x, randomPosInside.y, randomPosInside.z)) {
 					entity.level().addParticle(
