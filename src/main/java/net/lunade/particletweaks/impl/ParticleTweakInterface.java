@@ -40,6 +40,10 @@ public interface ParticleTweakInterface {
 
 	boolean particleTweaks$movesWithFluid();
 
+	void particleTweaks$setFluidMovementScale(double fluidMovementScale);
+
+	double particleTweaks$getFluidMovementScale();
+
 	void particleTweaks$setCanBurn(boolean set);
 
 	boolean particleTweaks$canBurn();
@@ -55,4 +59,8 @@ public interface ParticleTweakInterface {
 	void particleTweaks$setTargetScale(float f);
 
 	float particleTweaks$getTargetScale();
+
+	void particleTweaks$setMaxAlpha(float maxAlpha);
+
+	float particleTweaks$getMaxAlpha();
 }
