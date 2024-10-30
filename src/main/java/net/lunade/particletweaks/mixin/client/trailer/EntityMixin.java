@@ -1,10 +1,15 @@
 package net.lunade.particletweaks.mixin.client.trailer;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.lunade.particletweaks.impl.FlowingFluidParticleUtil;
 import net.lunade.particletweaks.particle.WaveSeedParticle;
 import net.lunade.particletweaks.registry.ParticleTweaksParticleTypes;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
@@ -44,6 +49,26 @@ public abstract class EntityMixin {
 
 	@Shadow
 	public abstract double getY();
+
+	@Shadow
+	private Vec3 deltaMovement;
+
+	@WrapOperation(
+		method = "doWaterSplashEffect",
+		at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/world/level/Level;addParticle(Lnet/minecraft/core/particles/ParticleOptions;DDDDDD)V",
+			ordinal = 0
+		)
+	)
+	public void particleTweaks$replacePoppingBubbles(
+		Level instance, ParticleOptions parameters, double x, double y, double z, double velocityX, double velocityY, double velocityZ, Operation<Void> original
+	) {
+		if (!FlowingFluidParticleUtil.isUnderFluid(instance, x, y - 0.35D, z)) {
+			parameters = ParticleTweaksParticleTypes.SPLASH;
+		}
+		original.call(instance, parameters, x, y, z, velocityX, velocityY, velocityZ);
+	}
 
 	@Inject(
 		method = "doWaterSplashEffect",
@@ -103,7 +128,7 @@ public abstract class EntityMixin {
 			useGenericSplash = true;
 		}
 
-		if (useGenericSplash) {
+		if (useGenericSplash && vec3.horizontalDistance() != 0D) {
 			BlockPos pos = entity.blockPosition();
 			int waterSurface = pos.getY() + 1;
 			for (int i = 1; true; i++) {
@@ -129,6 +154,49 @@ public abstract class EntityMixin {
 				0.1F,
 				0.2F
 			);
+		}
+	}
+
+	@Inject(
+		method = "baseTick",
+		at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/world/entity/Entity;checkBelowWorld()V"
+		)
+	)
+	public void particleTweaks$baseTick(CallbackInfo info) {
+		Entity entity = Entity.class.cast(this);
+		if (entity.isInWater()) {
+			Vec3 deltaMovement = entity.getDeltaMovement();
+			double movementLength = deltaMovement.length();
+			if (entity.getRandom().nextFloat() < movementLength) {
+				Vec3 randomPosInside = new Vec3(entity.getRandomX(1D), entity.getRandomY(), entity.getRandomZ(1D));
+				if (FlowingFluidParticleUtil.isUnderFluid(entity.level(), randomPosInside.x, randomPosInside.y, randomPosInside.z)) {
+					entity.level().addParticle(
+						ParticleTypes.BUBBLE,
+						randomPosInside.x,
+						randomPosInside.y,
+						randomPosInside.z,
+						deltaMovement.x * 1.15D,
+						deltaMovement.y,
+						deltaMovement.z * 1.15D
+					);
+				}
+			}
+			if (entity.getRandom().nextFloat() < movementLength * 2D) {
+				Vec3 randomPosInside = new Vec3(entity.getRandomX(1D), entity.getRandomY(), entity.getRandomZ(1D));
+				if (FlowingFluidParticleUtil.isUnderFluid(entity.level(), randomPosInside.x, randomPosInside.y, randomPosInside.z)) {
+					entity.level().addParticle(
+						ParticleTweaksParticleTypes.SMALL_BUBBLE,
+						randomPosInside.x,
+						randomPosInside.y,
+						randomPosInside.z,
+						deltaMovement.x * 1.5D,
+						Math.clamp(deltaMovement.y, -0.025D, 0.05D),
+						deltaMovement.z * 1.5D
+					);
+				}
+			}
 		}
 	}
 }

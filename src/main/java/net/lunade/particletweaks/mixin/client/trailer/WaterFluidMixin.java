@@ -31,8 +31,16 @@ public class WaterFluidMixin {
 	public void particleTweaks$useSmallBubble(
 		Level instance, ParticleOptions parameters, double x, double y, double z, double velocityX, double velocityY, double velocityZ, Operation<Void> original
 	) {
-		if (instance.random.nextFloat() <= 0.3F) {
-			original.call(instance, ParticleTweaksParticleTypes.SMALL_BUBBLE, x, y, z, velocityX, velocityY, velocityZ);
+		if (instance.random.nextFloat() <= 0.175F) {
+			original.call(
+				instance,
+				ParticleTweaksParticleTypes.SMALL_BUBBLE,
+				x,
+				y,
+				z,
+				velocityX,
+				instance.random.nextDouble() * (instance.random.nextFloat() <= 0.1F ? 0.05D : 0.0125D),
+				velocityZ);
 		}
 	}
 

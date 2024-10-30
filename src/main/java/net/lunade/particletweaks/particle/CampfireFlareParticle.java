@@ -20,7 +20,6 @@ package net.lunade.particletweaks.particle;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.lunade.particletweaks.impl.FlowingFluidParticleUtil;
 import net.lunade.particletweaks.impl.ParticleTweakInterface;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
@@ -28,60 +27,44 @@ import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.RisingParticle;
 import net.minecraft.client.particle.SpriteSet;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.SimpleParticleType;
-import net.minecraft.util.FastColor;
-import net.minecraft.util.Mth;
-import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 @Environment(EnvType.CLIENT)
-public class SmallBubbleParticle extends RisingParticle {
-	private final Vec3 direction;
-	private final float swaySpeed;
+public class CampfireFlareParticle extends RisingParticle {
 
-	SmallBubbleParticle(@NotNull ClientLevel level, @NotNull SpriteSet spriteProvider, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
+	CampfireFlareParticle(@NotNull ClientLevel level, @NotNull SpriteSet spriteProvider, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
 		super(level, x, y - 0.125D, z, velocityX, velocityY, velocityZ);
-		this.setSize(0.01F, 0.01F);
+		this.setSize(0.01F, 0.02F);
 		this.pickSprite(spriteProvider);
-		this.lifetime *= 2;
-		this.yd = velocityY;
-		this.quadSize = this.quadSize * (this.random.nextFloat() * 0.6F + 0.2F);
-		this.lifetime = (int)(16D / (Math.random() * 0.8D + 0.2D));
-		this.friction = 1F;
 		this.hasPhysics = true;
-
-		this.swaySpeed = (0.125F - (float)velocityY) * 80F;
-		this.direction = new Vec3(1D, 0D, 0D).yRot((random.nextFloat() * 360F) * Mth.DEG_TO_RAD);
-
-		int waterColor = level.getBiome(BlockPos.containing(x, y, z)).value().getWaterColor();
-		this.rCol = Math.clamp(((FastColor.ARGB32.red(waterColor) / 255F) * (float)level.random.triangle(1.3D, 0.3D)), 0F, 1F);
-		this.bCol = Math.clamp(((FastColor.ARGB32.blue(waterColor) / 255F) * (float)level.random.triangle(1.3D, 0.3D)), 0F, 1F);
-		this.gCol = Math.clamp(((FastColor.ARGB32.green(waterColor) / 255F) * (float)level.random.triangle(1.3D, 0.3D)), 0F, 1F);
+		this.quadSize = 0.125F;
+		this.friction = 1F;
 
 		if (this instanceof ParticleTweakInterface particleTweakInterface) {
 			particleTweakInterface.particleTweaks$setNewSystem(true);
 			particleTweakInterface.particleTweaks$setScalesToZero();
-			particleTweakInterface.particleTweaks$setScaler(0.4F);
+			particleTweakInterface.particleTweaks$setSwitchesExit(true);
 		}
 	}
 
 	@Override
 	public void tick() {
 		super.tick();
-		if (this.onGround || !FlowingFluidParticleUtil.isUnderFluid(this.level, this.x, this.y + 0.4D, this.z)) {
+		if (this.y == this.yo || this.onGround) {
 			this.age = this.lifetime;
 		}
+	}
 
-		double sin = Math.sin((this.age * Math.PI) / (this.swaySpeed));
-		this.xd = sin * (this.yd * this.direction.x()) * 0.35D;
-		this.zd = sin * (this.yd * this.direction.z()) * 0.35D;
+	@Override
+	protected int getLightColor(float tint) {
+		return 240;
 	}
 
 	@Override
 	@NotNull
 	public ParticleRenderType getRenderType() {
-		return ParticleRenderType.PARTICLE_SHEET_OPAQUE;
+		return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
 	}
 
 	@Environment(EnvType.CLIENT)
@@ -89,16 +72,20 @@ public class SmallBubbleParticle extends RisingParticle {
 		@Override
 		@NotNull
 		public Particle createParticle(@NotNull SimpleParticleType defaultParticleType, @NotNull ClientLevel clientLevel, double x, double y, double z, double g, double h, double i) {
-			return new SmallBubbleParticle(
-				clientLevel,
-				this.spriteProvider,
-				x,
-				y,
-				z,
-				g,
-				h,
-				i
-			);
+			CampfireFlareParticle campfireFlareParticle = new CampfireFlareParticle(clientLevel, this.spriteProvider, x, y, z, 0D, 0.02D, 0D);
+			campfireFlareParticle.setColor(1F, 0.75F, 0F);
+			return campfireFlareParticle;
+		}
+	}
+
+	@Environment(EnvType.CLIENT)
+	public record SoulFactory(@NotNull SpriteSet spriteProvider) implements ParticleProvider<SimpleParticleType> {
+		@Override
+		@NotNull
+		public Particle createParticle(@NotNull SimpleParticleType defaultParticleType, @NotNull ClientLevel clientLevel, double x, double y, double z, double g, double h, double i) {
+			CampfireFlareParticle campfireFlareParticle = new CampfireFlareParticle(clientLevel, this.spriteProvider, x, y, z, 0D, 0.02D, 0D);
+			campfireFlareParticle.setColor(0F, 1F, 1F);
+			return campfireFlareParticle;
 		}
 	}
 }

@@ -51,7 +51,8 @@ public class FluidFlowParticle extends TextureSheetParticle {
 			BlockState blockState = this.level.getBlockState(blockPos);
 			FluidState fluidState = blockState.getFluidState();
 			float fluidHeight = fluidState.getHeight(this.level, blockPos);
-			boolean isFluidHighEnough = !fluidState.isEmpty() && (fluidHeight + (float) blockPos.getY()) >= this.y;
+			float worldFluidHeight = fluidHeight + (float) blockPos.getY();
+			boolean isFluidHighEnough = !fluidState.isEmpty() && worldFluidHeight >= this.y;
 			if (isFluidHighEnough) {
 				if (fluidState.getFlow(this.level, blockPos).horizontalDistance() == 0D) this.age = Math.clamp(this.age + 3, 0, this.lifetime);
 				if (this.floatOnFluid) {
@@ -66,7 +67,11 @@ public class FluidFlowParticle extends TextureSheetParticle {
 				if (this.endWhenUnderFluid || this.spawnsRipples) {
 					this.age = this.lifetime;
 				}
-				if (this.spawnsRipples && !this.hasSpawnedRipple) {
+				if (this.spawnsRipples
+					&& !this.hasSpawnedRipple
+					&& worldFluidHeight < this.yo
+					&& this.level.getFluidState(blockPos.above()).isEmpty()
+				) {
 					this.hasSpawnedRipple = true;
 					this.level.addParticle(
 						ParticleTweaksParticleTypes.RIPPLE,
@@ -173,7 +178,7 @@ public class FluidFlowParticle extends TextureSheetParticle {
 			splashParticle.endWhenUnderFluid = true;
 			splashParticle.spawnsRipples = true;
 			splashParticle.quadSize *= 1.5F;
-			splashParticle.lifetime *= 2;
+			splashParticle.lifetime *= 3;
 
 			if (splashParticle instanceof ParticleTweakInterface particleTweakInterface) {
 				particleTweakInterface.particleTweaks$setNewSystem(true);
