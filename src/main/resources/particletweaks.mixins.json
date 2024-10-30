@@ -5,9 +5,11 @@
   "plugin": "net.lunade.particletweaks.mixin.ParticleTweaksMixinPlugin",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "client.trailer.EntityMixin",
     "client.trailer.LavaFluidMixin",
     "client.trailer.LevelRendererMixin",
-    "client.trailer.EntityMixin",
+    "client.trailer.LivingEntityMixin",
+    "client.trailer.MobMixin",
     "client.trailer.SpellParticleMixin",
     "client.trailer.TorchBlockMixin",
     "client.trailer.WallTorchBlockMixin",
