@@ -24,6 +24,9 @@ public class ParticleTweaksParticleTypes {
 	public static final SimpleParticleType CASCADE_A = register("cascade_a");
 	public static final SimpleParticleType CASCADE_B = register("cascade_b");
 	public static final SimpleParticleType SPLASH = register("splash");
+	public static final SimpleParticleType WAVE_OUTLINE = register("wave_outline");
+	public static final SimpleParticleType WAVE = register("wave");
+	public static final SimpleParticleType WAVE_SEED = register("wave_seed");
 	public static final SimpleParticleType CAVE_DUST = register("cave_dust");
 	public static final SimpleParticleType POOF = register("poof");
 	public static final SimpleParticleType FLARE = register("flare");

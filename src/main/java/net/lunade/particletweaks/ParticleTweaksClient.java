@@ -16,6 +16,8 @@ import net.lunade.particletweaks.particle.ComfySmokeParticle;
 import net.lunade.particletweaks.particle.FlareParticle;
 import net.lunade.particletweaks.particle.FluidFlowParticle;
 import net.lunade.particletweaks.particle.PoofParticle;
+import net.lunade.particletweaks.particle.WaveParticle;
+import net.lunade.particletweaks.particle.WaveSeedParticle;
 import net.lunade.particletweaks.registry.ParticleTweaksParticleTypes;
 
 @Environment(EnvType.CLIENT)
@@ -51,6 +53,9 @@ public class ParticleTweaksClient implements ClientModInitializer {
 		particleRegistry.register(ParticleTweaksParticleTypes.CASCADE_A, FluidFlowParticle.CascadeFactory::new);
 		particleRegistry.register(ParticleTweaksParticleTypes.CASCADE_B, FluidFlowParticle.CascadeFactory::new);
 		particleRegistry.register(ParticleTweaksParticleTypes.SPLASH, FluidFlowParticle.SplashFactory::new);
+		particleRegistry.register(ParticleTweaksParticleTypes.WAVE_OUTLINE, WaveParticle.OutlineFactory::new);
+		particleRegistry.register(ParticleTweaksParticleTypes.WAVE, WaveParticle.Factory::new);
+		particleRegistry.register(ParticleTweaksParticleTypes.WAVE_SEED, WaveSeedParticle.Factory::new);
 		particleRegistry.register(ParticleTweaksParticleTypes.CAVE_DUST, CaveDustParticle.Factory::new);
 		particleRegistry.register(ParticleTweaksParticleTypes.POOF, PoofParticle.Factory::new);
 		particleRegistry.register(ParticleTweaksParticleTypes.FLARE, FlareParticle.Factory::new);

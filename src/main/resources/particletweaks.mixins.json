@@ -7,6 +7,7 @@
   "client": [
     "client.trailer.LavaFluidMixin",
     "client.trailer.LevelRendererMixin",
+    "client.trailer.EntityMixin",
     "client.trailer.SpellParticleMixin",
     "client.trailer.TorchBlockMixin",
     "client.trailer.WallTorchBlockMixin",
