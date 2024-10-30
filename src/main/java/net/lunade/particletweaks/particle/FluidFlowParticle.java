@@ -3,6 +3,7 @@ package net.lunade.particletweaks.particle;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.lunade.particletweaks.impl.ParticleTweakInterface;
+import net.lunade.particletweaks.registry.ParticleTweaksParticleTypes;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
@@ -24,6 +25,8 @@ public class FluidFlowParticle extends TextureSheetParticle {
 	private boolean isLava;
 	private boolean floatOnFluid;
 	private boolean endWhenUnderFluid;
+	private boolean spawnsRipples;
+	private boolean hasSpawnedRipple;
 
 	FluidFlowParticle(
 		ClientLevel world, @NotNull SpriteSet spriteProvider, double d, double e, double f, double velX, double velY, double velZ
@@ -60,8 +63,20 @@ public class FluidFlowParticle extends TextureSheetParticle {
 						this.y += ((blockPos.getY() + fluidHeight) - this.y) * 0.5D;
 					}
 				}
-				if (this.endWhenUnderFluid) {
+				if (this.endWhenUnderFluid || this.spawnsRipples) {
 					this.age = this.lifetime;
+				}
+				if (this.spawnsRipples && !this.hasSpawnedRipple) {
+					this.hasSpawnedRipple = true;
+					this.level.addParticle(
+						ParticleTweaksParticleTypes.RIPPLE,
+						this.x,
+						(blockPos.getY() + fluidHeight),
+						this.z,
+						0D,
+						0D,
+						0D
+					);
 				}
 			}
 		}
@@ -156,6 +171,7 @@ public class FluidFlowParticle extends TextureSheetParticle {
 
 			splashParticle.alpha = 0.6F;
 			splashParticle.endWhenUnderFluid = true;
+			splashParticle.spawnsRipples = true;
 			splashParticle.quadSize *= 1.5F;
 			splashParticle.lifetime *= 2;
 
@@ -166,7 +182,7 @@ public class FluidFlowParticle extends TextureSheetParticle {
 				particleTweakInterface.particleTweaks$setScalesToZero();
 				particleTweakInterface.particleTweaks$setSwitchesExit(true);
 				particleTweakInterface.particleTweaks$setFluidMovementScale(0.05D);
-				particleTweakInterface.particleTweaks$setScaler(0.5F);
+				particleTweakInterface.particleTweaks$setScaler(0.75F);
 				particleTweakInterface.particleTweaks$setMaxAlpha(0.6F);
 			}
 

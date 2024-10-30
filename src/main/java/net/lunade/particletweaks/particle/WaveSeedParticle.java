@@ -11,6 +11,7 @@ import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
@@ -44,25 +45,31 @@ public class WaveSeedParticle extends NoRenderParticle {
 			strength,
 			0F
 		);
-		this.spawnSplashParticles(
+		spawnSplashParticles(
+			this.level,
+			this.x,
+			this.y,
+			this.z,
 			this.random,
-			Math.min(50, (int) (calculateParticleStrength(this.strength, 1F, 0.1F) * this.width * 25)),
+			Math.max(5, Math.min(50, (int) (calculateParticleStrength(this.strength, 1F, 0.1F) * this.width * 25))),
 			this.width,
 			this.strength * 0.5F,
 			0.3F
 		);
 	}
 
-	private void spawnSplashParticles(RandomSource random, int count, float width, float strength, float horizontalStrengthScale) {
+	public static void spawnSplashParticles(
+		Level level, double x, double y, double z, RandomSource random, int count, float width, float strength, float horizontalStrengthScale
+	) {
 		strength = Math.min(0.4F, Math.max(0.2F, strength * 2F));
 		for (int i = 0; i < count; i++) {
-			Vec3 rotation = new Vec3(1D, 0D, 0D).yRot((this.random.nextFloat() * 360F) * Mth.DEG_TO_RAD);
+			Vec3 rotation = new Vec3(1D, 0D, 0D).yRot((random.nextFloat() * 360F) * Mth.DEG_TO_RAD);
 			Vec3 velocity = rotation.scale(strength * horizontalStrengthScale);
-			this.level.addParticle(
+			level.addParticle(
 				ParticleTweaksParticleTypes.SPLASH,
-				this.x + rotation.x * width * random.nextFloat(),
-				this.y + rotation.y,
-				this.z + rotation.z * width * random.nextFloat(),
+				x + rotation.x * width * random.nextFloat(),
+				y + rotation.y,
+				z + rotation.z * width * random.nextFloat(),
 				velocity.x,
 				strength,
 				velocity.z
@@ -80,9 +87,13 @@ public class WaveSeedParticle extends NoRenderParticle {
 			this.remove();
 		}
 		if (this.age == 9 && this.strength > 0.15D) {
-			this.spawnSplashParticles(
+			spawnSplashParticles(
+				this.level,
+				this.x,
+				this.y,
+				this.z,
 				this.random,
-				Math.min(50, (int) (calculateParticleStrength(this.strength, 1F, 0.1F) * this.width * 30)),
+				Math.max(5, Math.min(50, (int) (calculateParticleStrength(this.strength, 1F, 0.1F) * this.width * 30))),
 				this.width * 0.75F,
 				this.strength,
 				0.1F
