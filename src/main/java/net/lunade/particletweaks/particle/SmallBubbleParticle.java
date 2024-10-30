@@ -69,7 +69,7 @@ public class SmallBubbleParticle extends RisingParticle {
 	@Override
 	public void tick() {
 		super.tick();
-		if (this.onGround || !FlowingFluidParticleUtil.isUnderFluid(this.level, this.x, this.y + 0.4D, this.z)) {
+		if (this.onGround || !FlowingFluidParticleUtil.isUnderFluid(this.level, this.x, this.y + 0.5D, this.z)) {
 			this.age = this.lifetime;
 		}
 
