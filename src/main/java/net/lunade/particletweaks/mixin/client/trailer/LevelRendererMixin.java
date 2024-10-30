@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.lunade.particletweaks.config.ParticleTweaksConfigGetter;
 import net.lunade.particletweaks.registry.ParticleTweaksParticleTypes;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -28,7 +29,7 @@ public class LevelRendererMixin {
 		double velocityZ,
 		Operation<Particle> original
 	) {
-		if (parameters == ParticleTypes.POOF) {
+		if (parameters == ParticleTypes.POOF && ParticleTweaksConfigGetter.trailerPoof()) {
 			parameters = ParticleTweaksParticleTypes.POOF;
 		}
 		return original.call(parameters, alwaysSpawn, canSpawnOnMinimal, x, y, z, velocityX, velocityY, velocityZ);
