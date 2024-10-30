@@ -3,6 +3,7 @@ package net.lunade.particletweaks.mixin.client.trailer;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.lunade.particletweaks.config.ParticleTweaksConfigGetter;
 import net.lunade.particletweaks.impl.ParticleTweakInterface;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -37,33 +38,41 @@ public abstract class SpellParticleMixin extends TextureSheetParticle implements
 
 	@Inject(method = "<init>*", at = @At("TAIL"))
 	private void particleTweaks$init(CallbackInfo info) {
-		this.particleTweaks$setNewSystem(true);
-		this.particleTweaks$setScaler(0.15F);
-		this.particleTweaks$setScalesToZero();
-		this.particleTweaks$setSwitchesExit(false);
+		if (ParticleTweaksConfigGetter.trailerSpell()) {
+			this.particleTweaks$setNewSystem(true);
+			this.particleTweaks$setScaler(0.15F);
+			this.particleTweaks$setScalesToZero();
+			this.particleTweaks$setSwitchesExit(false);
 
-		RandomSource random = RandomSource.createNewThreadLocalInstance();
-		this.particleTweaks$yRotPerTick = (random.nextFloat() - 0.5F) * 0.075F;
-		this.particleTweaks$zRotPerTick = (random.nextFloat() - 0.5F) * 0.075F;
+			RandomSource random = RandomSource.createNewThreadLocalInstance();
+			this.particleTweaks$yRotPerTick = (random.nextFloat() - 0.5F) * 0.075F;
+			this.particleTweaks$zRotPerTick = (random.nextFloat() - 0.5F) * 0.075F;
+		}
 	}
 
 	@Inject(method = "tick", at = @At("HEAD"))
 	public void particleTweaks$tick(CallbackInfo info) {
-		this.oRoll = this.roll;
-		this.roll += this.particleTweaks$zRotPerTick;
+		if (ParticleTweaksConfigGetter.trailerSpell()) {
+			this.oRoll = this.roll;
+			this.roll += this.particleTweaks$zRotPerTick;
 
-		this.particleTweaks$prevYRot = this.particleTweaks$yRot;
-		this.particleTweaks$yRot += this.particleTweaks$yRotPerTick;
+			this.particleTweaks$prevYRot = this.particleTweaks$yRot;
+			this.particleTweaks$yRot += this.particleTweaks$yRotPerTick;
+		}
 	}
 
 	@Override
 	public void render(VertexConsumer vertexConsumer, Camera camera, float tickDelta) {
-		Quaternionf quaternionf = new Quaternionf();
-		this.getFacingCameraMode().setRotation(quaternionf, camera, tickDelta);
-		quaternionf.rotateZ(Mth.lerp(tickDelta, this.oRoll, this.roll));
-		quaternionf.rotateY(Mth.lerp(tickDelta, this.particleTweaks$prevYRot, this.particleTweaks$yRot));
+		if (ParticleTweaksConfigGetter.trailerSpell()) {
+			Quaternionf quaternionf = new Quaternionf();
+			this.getFacingCameraMode().setRotation(quaternionf, camera, tickDelta);
+			quaternionf.rotateZ(Mth.lerp(tickDelta, this.oRoll, this.roll));
+			quaternionf.rotateY(Mth.lerp(tickDelta, this.particleTweaks$prevYRot, this.particleTweaks$yRot));
 
-		this.renderRotatedQuad(vertexConsumer, camera, quaternionf, tickDelta);
+			this.renderRotatedQuad(vertexConsumer, camera, quaternionf, tickDelta);
+		} else {
+			super.render(vertexConsumer, camera, tickDelta);
+		}
 	}
 
 }

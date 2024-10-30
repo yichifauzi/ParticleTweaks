@@ -2,6 +2,7 @@ package net.lunade.particletweaks.impl;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.lunade.particletweaks.config.ParticleTweaksConfigGetter;
 import net.lunade.particletweaks.registry.ParticleTweaksParticleTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -12,12 +13,14 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import org.jetbrains.annotations.NotNull;
 
 @Environment(EnvType.CLIENT)
-public class AmbientParticleUtil {
+public class CaveDustSpawner {
 
 	public static void tick(ClientLevel world) {
-		Minecraft minecraft = Minecraft.getInstance();
-		BlockPos pos = minecraft.gameRenderer.getMainCamera().getBlockPosition();
-		animateTick(world, pos.getX(), pos.getY(), pos.getZ());
+		if (ParticleTweaksConfigGetter.trailerCaveDust()) {
+			Minecraft minecraft = Minecraft.getInstance();
+			BlockPos pos = minecraft.gameRenderer.getMainCamera().getBlockPosition();
+			animateTick(world, pos.getX(), pos.getY(), pos.getZ());
+		}
 	}
 
 	private static void animateTick(@NotNull ClientLevel level, int posX, int posY, int posZ) {

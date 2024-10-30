@@ -5,6 +5,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.lunade.particletweaks.config.ParticleTweaksConfigGetter;
 import net.lunade.particletweaks.impl.TorchParticleUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -31,7 +32,7 @@ public class TorchBlockMixin {
 	public boolean particleTweaks$trailerSmoke(
 		Level instance, ParticleOptions parameters, double x, double y, double z, double velocityX, double velocityY, double velocityZ
 	) {
-		return false;
+		return !ParticleTweaksConfigGetter.trailerTorches();
 	}
 
 	@WrapOperation(
@@ -46,16 +47,20 @@ public class TorchBlockMixin {
 		Level instance, ParticleOptions parameters, double x, double y, double z, double velocityX, double velocityY, double velocityZ, Operation<Void> original,
 		BlockState state, Level world, BlockPos pos
 	) {
-		if (instance.random.nextBoolean()) {
-			Minecraft minecraft = Minecraft.getInstance();
-			Vec3 cameraPos = minecraft.gameRenderer.getMainCamera().getPosition();
-			Vec3 posDiff = cameraPos
-				.subtract(0D, cameraPos.y, 0D)
-				.subtract(new Vec3(x, 0D, z))
-				.normalize().scale(0.0625D);
-			original.call(instance, parameters, x + posDiff.x, y - 0.075D, z + posDiff.z, velocityX, velocityY, velocityZ);
+		if (ParticleTweaksConfigGetter.trailerTorches()) {
+			if (instance.random.nextBoolean()) {
+				Minecraft minecraft = Minecraft.getInstance();
+				Vec3 cameraPos = minecraft.gameRenderer.getMainCamera().getPosition();
+				Vec3 posDiff = cameraPos
+					.subtract(0D, cameraPos.y, 0D)
+					.subtract(new Vec3(x, 0D, z))
+					.normalize().scale(0.0625D);
+				original.call(instance, parameters, x + posDiff.x, y - 0.075D, z + posDiff.z, velocityX, velocityY, velocityZ);
+			}
+			TorchParticleUtil.onAnimateTick(pos);
+		} else {
+			original.call(instance, parameters, x, y, z, velocityX, velocityY, velocityZ);
 		}
-		TorchParticleUtil.onAnimateTick(pos);
 	}
 
 }

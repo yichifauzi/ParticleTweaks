@@ -1,10 +1,9 @@
 package net.lunade.particletweaks.mixin.client.trailer;
 
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.lunade.particletweaks.config.ParticleTweaksConfigGetter;
 import net.lunade.particletweaks.registry.ParticleTweaksParticleTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
@@ -32,7 +31,7 @@ public class CampfireBlockMixin {
 	public boolean particleTweaks$removeLava(
 		Level instance, ParticleOptions parameters, double x, double y, double z, double velocityX, double velocityY, double velocityZ
 	) {
-		return false;
+		return !ParticleTweaksConfigGetter.trailerCampfires();
 	}
 
 	@Inject(
@@ -47,18 +46,20 @@ public class CampfireBlockMixin {
 	public void particleTweaks$AddFlares(
 		BlockState state, Level world, BlockPos pos, RandomSource random, CallbackInfo info
 	) {
-		ParticleOptions particle = ParticleTweaksParticleTypes.CAMPFIRE_FLARE;
-		if (state.is(Blocks.SOUL_CAMPFIRE)) particle = ParticleTweaksParticleTypes.SOUL_CAMPFIRE_FLARE;
+		if (ParticleTweaksConfigGetter.trailerCampfires()) {
+			ParticleOptions particle = ParticleTweaksParticleTypes.CAMPFIRE_FLARE;
+			if (state.is(Blocks.SOUL_CAMPFIRE)) particle = ParticleTweaksParticleTypes.SOUL_CAMPFIRE_FLARE;
 
-		world.addParticle(
-			particle,
-			(double)pos.getX() + 0.5D + (random.nextDouble() - 0.5D) * 0.7D,
-			(double)pos.getY() + 0.5D + (random.nextDouble()) * 0.25D,
-			(double)pos.getZ() + 0.5D + (random.nextDouble() - 0.5D) * 0.7D,
-			random.nextFloat() * 0.5F,
-			0.02D,
-			random.nextFloat() * 0.5F
-		);
+			world.addParticle(
+				particle,
+				(double) pos.getX() + 0.5D + (random.nextDouble() - 0.5D) * 0.7D,
+				(double) pos.getY() + 0.5D + (random.nextDouble()) * 0.25D,
+				(double) pos.getZ() + 0.5D + (random.nextDouble() - 0.5D) * 0.7D,
+				random.nextFloat() * 0.5F,
+				0.02D,
+				random.nextFloat() * 0.5F
+			);
+		}
 	}
 
 }

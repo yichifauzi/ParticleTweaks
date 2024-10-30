@@ -2,6 +2,7 @@ package net.lunade.particletweaks.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.lunade.particletweaks.config.ParticleTweaksConfigGetter;
 import net.lunade.particletweaks.registry.ParticleTweaksParticleTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -112,7 +113,7 @@ public class FlowingFluidParticleUtil {
 			Vec3 flowVec = rawFlow.normalize();
 			float fluidHeight = state.getHeight(world, pos);
 			boolean isDown = state.getValue(FlowingFluid.FALLING);
-			if ((isDown || horizontalParticles) && random.nextInt(isDown ? downChance : horizontalChance) == 0) {
+			if ((isDown || horizontalParticles) && random.nextInt(isDown ? downChance : horizontalChance) == 0 && ParticleTweaksConfigGetter.trailerFlowingFluids()) {
 				if (!isDown) {
 					List<Direction> possibleFlowingDirections = new ArrayList<>();
 					Vec3 flow1 = new Vec3(flowVec.x, 0D, 0D);
@@ -156,7 +157,7 @@ public class FlowingFluidParticleUtil {
 				}
 			}
 
-			if (!isSource && createCascades) {
+			if (!isSource && createCascades && ParticleTweaksConfigGetter.trailerCascades()) {
 				if (isDown) {
 					FluidState belowFluidState = world.getFluidState(pos.below());
 					if (belowFluidState.isSource()) {
@@ -243,6 +244,11 @@ public class FlowingFluidParticleUtil {
 	}
 
 	public static void tickCascades(ClientLevel world) {
+		if (!ParticleTweaksConfigGetter.trailerCascades()) {
+			CASCADES.clear();
+			return;
+		}
+
 		Minecraft minecraft = Minecraft.getInstance();
 		BlockPos cameraPos = minecraft.gameRenderer.getMainCamera().getBlockPosition();
 		CASCADES.removeIf(blockPos ->

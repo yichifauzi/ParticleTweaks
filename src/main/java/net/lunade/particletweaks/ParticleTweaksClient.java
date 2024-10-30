@@ -8,7 +8,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
-import net.lunade.particletweaks.impl.AmbientParticleUtil;
+import net.lunade.particletweaks.impl.CaveDustSpawner;
 import net.lunade.particletweaks.impl.FlowingFluidParticleUtil;
 import net.lunade.particletweaks.impl.TorchParticleUtil;
 import net.lunade.particletweaks.particle.CampfireFlareParticle;
@@ -25,6 +25,7 @@ import net.lunade.particletweaks.registry.ParticleTweaksParticleTypes;
 
 @Environment(EnvType.CLIENT)
 public class ParticleTweaksClient implements ClientModInitializer {
+	public static boolean areConfigsInit = false;
 
 	@Override
 	public void onInitializeClient() {
@@ -44,7 +45,7 @@ public class ParticleTweaksClient implements ClientModInitializer {
 		ClientTickEvents.START_WORLD_TICK.register((clientLevel) -> {
 			FlowingFluidParticleUtil.tickCascades(clientLevel);
 			TorchParticleUtil.tickTorches(clientLevel);
-			AmbientParticleUtil.tick(clientLevel);
+			CaveDustSpawner.tick(clientLevel);
 		});
 
 		ParticleTweaksParticleTypes.init();

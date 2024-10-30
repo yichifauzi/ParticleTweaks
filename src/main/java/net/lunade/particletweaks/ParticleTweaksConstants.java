@@ -12,6 +12,7 @@ public class ParticleTweaksConstants {
 	public static final Logger LOGGER = ParticleTweaksPreLoadConstants.LOGGER;
 
 	public static final boolean MAKE_BUBBLES_POP_MOD = FabricLoader.getInstance().isModLoaded("make_bubbles_pop");
+	public static final boolean CLOTH_CONFIG = FabricLoader.getInstance().isModLoaded("cloth-config") || FabricLoader.getInstance().isModLoaded("cloth_config");
 
 	/**
 	 * Used for features that may be unstable and crash in public builds.

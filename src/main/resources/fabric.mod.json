@@ -13,6 +13,9 @@
   "entrypoints": {
     "client": [
       "net.lunade.particletweaks.ParticleTweaksClient"
+    ],
+    "modmenu": [
+      "net.lunade.particletweaks.config.ParticleTweaksModMenu"
     ]
   },
   "mixins": [

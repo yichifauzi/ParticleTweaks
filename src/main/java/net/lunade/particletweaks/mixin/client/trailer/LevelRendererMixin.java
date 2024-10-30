@@ -6,6 +6,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.lunade.particletweaks.config.ParticleTweaksConfigGetter;
 import net.lunade.particletweaks.registry.ParticleTweaksParticleTypes;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -59,7 +60,7 @@ public class LevelRendererMixin {
 		@Local(ordinal = 1) double zOffset,
 		@Local(ordinal = 1) BlockPos blockPos
 	) {
-		if (fluidState.is(FluidTags.WATER)) {
+		if (ParticleTweaksConfigGetter.trailerSplashes() && fluidState.is(FluidTags.WATER)) {
 			return ParticleTweaksParticleTypes.RIPPLE;
 		}
 		return original;

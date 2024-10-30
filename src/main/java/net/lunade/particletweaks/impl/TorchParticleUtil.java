@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import net.lunade.particletweaks.config.ParticleTweaksConfigGetter;
 import net.lunade.particletweaks.registry.ParticleTweaksParticleTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -48,6 +49,11 @@ public class TorchParticleUtil {
 	}
 
 	public static void tickTorches(ClientLevel world) {
+		if (!ParticleTweaksConfigGetter.trailerTorches()) {
+			TORCH_TICKS.clear();
+			return;
+		}
+
 		Minecraft minecraft = Minecraft.getInstance();
 		BlockPos cameraPos = minecraft.gameRenderer.getMainCamera().getBlockPosition();
 

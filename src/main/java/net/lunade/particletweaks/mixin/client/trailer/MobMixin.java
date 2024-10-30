@@ -3,6 +3,7 @@ package net.lunade.particletweaks.mixin.client.trailer;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.lunade.particletweaks.config.ParticleTweaksConfigGetter;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.tags.FluidTags;
@@ -24,6 +25,9 @@ public class MobMixin {
 	)
 	public SimpleParticleType particleTweaks$useBubblePoofUnderwater(SimpleParticleType original) {
 		LivingEntity livingEntity = LivingEntity.class.cast(this);
-		return livingEntity.level().getFluidState(livingEntity.blockPosition()).is(FluidTags.WATER) ? ParticleTypes.BUBBLE : original;
+		return ParticleTweaksConfigGetter.trailerBubbles()
+			&& ParticleTweaksConfigGetter.trailerPoof()
+			&& livingEntity.level().getFluidState(livingEntity.blockPosition()).is(FluidTags.WATER)
+			? ParticleTypes.BUBBLE : original;
 	}
 }

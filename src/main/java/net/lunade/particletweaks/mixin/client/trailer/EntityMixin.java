@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.lunade.particletweaks.config.ParticleTweaksConfigGetter;
 import net.lunade.particletweaks.impl.FlowingFluidParticleUtil;
 import net.lunade.particletweaks.particle.WaveSeedParticle;
 import net.lunade.particletweaks.registry.ParticleTweaksParticleTypes;
@@ -50,9 +51,6 @@ public abstract class EntityMixin {
 	@Shadow
 	public abstract double getY();
 
-	@Shadow
-	private Vec3 deltaMovement;
-
 	@WrapOperation(
 		method = "doWaterSplashEffect",
 		at = @At(
@@ -64,7 +62,8 @@ public abstract class EntityMixin {
 	public void particleTweaks$replacePoppingBubbles(
 		Level instance, ParticleOptions parameters, double x, double y, double z, double velocityX, double velocityY, double velocityZ, Operation<Void> original
 	) {
-		if (!FlowingFluidParticleUtil.isUnderFluid(instance, x, y - 0.35D, z)) {
+		if (ParticleTweaksConfigGetter.trailerBubbles() && !FlowingFluidParticleUtil.isUnderFluid(instance, x, y - 0.35D, z)) {
+			if (!ParticleTweaksConfigGetter.trailerSplashes()) return;
 			parameters = ParticleTweaksParticleTypes.SPLASH;
 		}
 		original.call(instance, parameters, x, y, z, velocityX, velocityY, velocityZ);
@@ -81,79 +80,81 @@ public abstract class EntityMixin {
 	public void particleTweaks$doWaterSplashEffect(
 		CallbackInfo info
 	) {
-		Entity entity = Entity.class.cast(this);
-		Vec3 vec3 = entity.getDeltaMovement();
-		EntityDimensions entityDimensions = this.dimensions;
-		float width = entityDimensions.width();
+		if (ParticleTweaksConfigGetter.trailerSplashes()) {
+			Entity entity = Entity.class.cast(this);
+			Vec3 vec3 = entity.getDeltaMovement();
+			EntityDimensions entityDimensions = this.dimensions;
+			float width = entityDimensions.width();
 
-		double ySpeed = Math.abs(vec3.y);
-		double strength = ySpeed * ((entity instanceof Player) ? 0.45D : width * 1.1D);
-		boolean useGenericSplash = false;
-		if (strength >= 0.4D) {
-			BlockPos pos = entity.blockPosition();
-			BlockState blockState = this.level.getBlockState(pos);
-			FluidState fluidState = blockState.getFluidState();
+			double ySpeed = Math.abs(vec3.y);
+			double strength = ySpeed * ((entity instanceof Player) ? 0.45D : width * 1.1D);
+			boolean useGenericSplash = false;
+			if (strength >= 0.4D) {
+				BlockPos pos = entity.blockPosition();
+				BlockState blockState = this.level.getBlockState(pos);
+				FluidState fluidState = blockState.getFluidState();
 
-			if (fluidState.isSourceOfType(Fluids.WATER)) {
-				if (blockState.getCollisionShape(this.level, pos).isEmpty()) {
-					int waterSurface = pos.getY() + 1;
-					for (int i = 1; true; i++) {
-						if (i == 4) return;
-						BlockState aboveState = this.level.getBlockState(pos.above(i));
-						FluidState aboveFluidState = aboveState.getFluidState();
-						if (aboveFluidState.isSourceOfType(Fluids.WATER)) {
-							waterSurface += 1;
-						} else if (!aboveFluidState.isEmpty()) {
-							return;
-						} else {
-							break;
+				if (fluidState.isSourceOfType(Fluids.WATER)) {
+					if (blockState.getCollisionShape(this.level, pos).isEmpty()) {
+						int waterSurface = pos.getY() + 1;
+						for (int i = 1; true; i++) {
+							if (i == 4) return;
+							BlockState aboveState = this.level.getBlockState(pos.above(i));
+							FluidState aboveFluidState = aboveState.getFluidState();
+							if (aboveFluidState.isSourceOfType(Fluids.WATER)) {
+								waterSurface += 1;
+							} else if (!aboveFluidState.isEmpty()) {
+								return;
+							} else {
+								break;
+							}
 						}
+						entity.level().addAlwaysVisibleParticle(
+							ParticleTweaksParticleTypes.WAVE_SEED,
+							this.getX(),
+							waterSurface,
+							this.getZ(),
+							width,
+							strength - 0.35D,
+							0F
+						);
+					} else {
+						useGenericSplash = fluidState.is(FluidTags.WATER);
 					}
-					entity.level().addAlwaysVisibleParticle(
-						ParticleTweaksParticleTypes.WAVE_SEED,
-						this.getX(),
-						waterSurface,
-						this.getZ(),
-						width,
-						strength - 0.35D,
-						0F
-					);
 				} else {
 					useGenericSplash = fluidState.is(FluidTags.WATER);
 				}
 			} else {
-				useGenericSplash = fluidState.is(FluidTags.WATER);
+				useGenericSplash = true;
 			}
-		} else {
-			useGenericSplash = true;
-		}
 
-		if (useGenericSplash && vec3.horizontalDistance() != 0D) {
-			BlockPos pos = entity.blockPosition();
-			int waterSurface = pos.getY() + 1;
-			for (int i = 1; true; i++) {
-				if (i == 4) return;
-				BlockState aboveState = this.level.getBlockState(pos.above(i));
-				FluidState aboveFluidState = aboveState.getFluidState();
-				if (aboveFluidState.isSourceOfType(Fluids.WATER)) {
-					waterSurface += 1;
-				} else if (!aboveFluidState.isEmpty()) {
-					return;
-				} else {
-					break;
+			if (useGenericSplash && vec3.horizontalDistance() != 0D) {
+				BlockPos pos = entity.blockPosition();
+				int waterSurface = pos.getY() + 1;
+				for (int i = 1; true; i++) {
+					if (i == 4) return;
+					BlockState aboveState = this.level.getBlockState(pos.above(i));
+					FluidState aboveFluidState = aboveState.getFluidState();
+					if (aboveFluidState.isSourceOfType(Fluids.WATER)) {
+						waterSurface += 1;
+					} else if (!aboveFluidState.isEmpty()) {
+						return;
+					} else {
+						break;
+					}
 				}
+				WaveSeedParticle.spawnSplashParticles(
+					this.level,
+					this.getX(),
+					waterSurface,
+					this.getZ(),
+					this.random,
+					this.random.nextInt(2, 5),
+					width,
+					0.1F,
+					0.2F
+				);
 			}
-			WaveSeedParticle.spawnSplashParticles(
-				this.level,
-				this.getX(),
-				waterSurface,
-				this.getZ(),
-				this.random,
-				this.random.nextInt(2, 5),
-				width,
-				0.1F,
-				0.2F
-			);
 		}
 	}
 
@@ -166,12 +167,12 @@ public abstract class EntityMixin {
 	)
 	public void particleTweaks$baseTick(CallbackInfo info) {
 		Entity entity = Entity.class.cast(this);
-		if (entity.isInWater()) {
+		if (entity.isInWater() && ParticleTweaksConfigGetter.trailerWaterMovement()) {
 			Vec3 deltaMovement = entity.getDeltaMovement();
 			double movementLength = deltaMovement.length();
 			if (movementLength == 0D) return;
 
-			if (entity.getRandom().nextFloat() < movementLength * 0.655D) {
+			if (ParticleTweaksConfigGetter.trailerBubbles() && entity.getRandom().nextFloat() < movementLength * 0.655D) {
 				Vec3 randomPosInside = new Vec3(entity.getRandomX(1D), entity.getRandomY(), entity.getRandomZ(1D));
 				if (FlowingFluidParticleUtil.isUnderFluid(entity.level(), randomPosInside.x, randomPosInside.y, randomPosInside.z)) {
 					entity.level().addParticle(

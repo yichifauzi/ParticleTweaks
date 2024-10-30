@@ -2,6 +2,7 @@ package net.lunade.particletweaks.mixin.client.trailer;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.lunade.particletweaks.config.ParticleTweaksConfigGetter;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.BubbleParticle;
 import net.minecraft.client.particle.TextureSheetParticle;
@@ -20,8 +21,7 @@ public abstract class BubbleParticleMixin extends TextureSheetParticle {
 
 	@Inject(method = "<init>*", at = @At("TAIL"))
 	private void particleTweaks$init(CallbackInfo info) {
-		this.lifetime *= 2;
+		if (ParticleTweaksConfigGetter.trailerBubbles()) this.lifetime *= 2;
 	}
-
 
 }
