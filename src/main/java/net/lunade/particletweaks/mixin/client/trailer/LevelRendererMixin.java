@@ -38,7 +38,7 @@ public class LevelRendererMixin {
 		double velocityZ,
 		Operation<Particle> original
 	) {
-		if (parameters == ParticleTypes.POOF) {
+		if (parameters == ParticleTypes.POOF && ParticleTweaksConfigGetter.trailerPoof()) {
 			parameters = ParticleTweaksParticleTypes.POOF;
 		}
 		return original.call(parameters, alwaysSpawn, canSpawnOnMinimal, x, y, z, velocityX, velocityY, velocityZ);
